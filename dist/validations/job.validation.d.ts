@@ -168,29 +168,33 @@ export declare const jobQuerySchema: z.ZodObject<{
     minSalary: z.ZodOptional<z.ZodNumber>;
     maxSalary: z.ZodOptional<z.ZodNumber>;
     featured: z.ZodOptional<z.ZodBoolean>;
-    status: z.ZodOptional<z.ZodEnum<["draft", "active", "closed", "expired"]>>;
+    status: z.ZodOptional<z.ZodEnum<["draft", "active", "closed", "expired", "all"]>>;
     skills: z.ZodOptional<z.ZodString>;
+    createdBy: z.ZodOptional<z.ZodString>;
+    mine: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     sort: string;
     search: string;
     limit: number;
     page: number;
     order: "asc" | "desc";
-    status?: "closed" | "draft" | "active" | "expired" | undefined;
+    status?: "closed" | "draft" | "active" | "expired" | "all" | undefined;
     location?: string | undefined;
     skills?: string | undefined;
     companyId?: string | undefined;
     category?: string | undefined;
     featured?: boolean | undefined;
     experience?: string | undefined;
+    createdBy?: string | undefined;
     jobType?: string | undefined;
     workMode?: string | undefined;
     company?: string | undefined;
     minSalary?: number | undefined;
     maxSalary?: number | undefined;
+    mine?: boolean | undefined;
 }, {
     sort?: string | undefined;
-    status?: "closed" | "draft" | "active" | "expired" | undefined;
+    status?: "closed" | "draft" | "active" | "expired" | "all" | undefined;
     location?: string | undefined;
     skills?: string | undefined;
     companyId?: string | undefined;
@@ -198,6 +202,7 @@ export declare const jobQuerySchema: z.ZodObject<{
     featured?: boolean | undefined;
     search?: string | undefined;
     experience?: string | undefined;
+    createdBy?: string | undefined;
     jobType?: string | undefined;
     workMode?: string | undefined;
     company?: string | undefined;
@@ -206,6 +211,7 @@ export declare const jobQuerySchema: z.ZodObject<{
     order?: "asc" | "desc" | undefined;
     minSalary?: number | undefined;
     maxSalary?: number | undefined;
+    mine?: boolean | undefined;
 }>;
 export declare const jobIdParamSchema: z.ZodObject<{
     id: z.ZodString;

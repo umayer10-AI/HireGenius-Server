@@ -36,8 +36,10 @@ exports.jobQuerySchema = common_validation_1.paginationSchema.extend({
     minSalary: zod_1.z.coerce.number().optional(),
     maxSalary: zod_1.z.coerce.number().optional(),
     featured: zod_1.z.coerce.boolean().optional(),
-    status: zod_1.z.enum(["draft", "active", "closed", "expired"]).optional(),
+    status: zod_1.z.enum(["draft", "active", "closed", "expired", "all"]).optional(),
     skills: zod_1.z.string().optional(),
+    createdBy: common_validation_1.objectIdSchema.optional(),
+    mine: zod_1.z.coerce.boolean().optional(),
 });
 exports.jobIdParamSchema = zod_1.z.object({
     id: zod_1.z.string().min(1),

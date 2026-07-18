@@ -80,12 +80,12 @@ export declare const interviewPrepSchema: z.ZodObject<{
     difficulty: z.ZodDefault<z.ZodEnum<["easy", "medium", "hard"]>>;
     category: z.ZodDefault<z.ZodEnum<["technical", "hr", "behavioral", "all"]>>;
 }, "strip", z.ZodTypeAny, {
-    category: "technical" | "hr" | "behavioral" | "all";
+    category: "all" | "technical" | "hr" | "behavioral";
     jobTitle: string;
     difficulty: "easy" | "medium" | "hard";
 }, {
     jobTitle: string;
-    category?: "technical" | "hr" | "behavioral" | "all" | undefined;
+    category?: "all" | "technical" | "hr" | "behavioral" | undefined;
     difficulty?: "easy" | "medium" | "hard" | undefined;
 }>;
 export declare const jobDescriptionSchema: z.ZodObject<{

@@ -23,7 +23,8 @@ router.get("/health", (_req, res) => {
     res.json({ success: true, message: "HireGenius API is healthy", data: { status: "ok" } });
 });
 router.get("/stats", misc_controller_1.getPlatformStats);
-router.get("/auth/me", auth_middleware_1.requireAuth, user_controller_1.getMe);
+router.get("/me", auth_middleware_1.requireAuth, user_controller_1.getMe);
+router.patch("/me/role", auth_middleware_1.requireAuth, (0, error_middleware_1.validate)(zod_1.z.object({ role: zod_1.z.enum(["candidate", "recruiter"]) })), user_controller_1.setMyRole);
 router.get("/users", auth_middleware_1.requireAuth, auth_middleware_1.requireAdmin, (0, error_middleware_1.validate)(user_validation_1.userQuerySchema, "query"), user_controller_1.listUsers);
 router.get("/users/:id", auth_middleware_1.optionalAuth, (0, error_middleware_1.validate)(user_validation_1.userIdParamSchema, "params"), user_controller_1.getUser);
 router.patch("/users/:id", auth_middleware_1.requireAuth, (0, error_middleware_1.validate)(user_validation_1.userIdParamSchema, "params"), (0, error_middleware_1.validate)(user_validation_1.updateUserSchema), user_controller_1.updateUser);
@@ -43,6 +44,7 @@ router.post("/companies/:id/logo", auth_middleware_1.requireAuth, auth_middlewar
 router.post("/companies/:id/banner", auth_middleware_1.requireAuth, auth_middleware_1.requireRecruiter, upload_middleware_1.uploadImage.single("file"), company_controller_1.uploadCompanyBanner);
 router.get("/jobs/featured", job_controller_1.getFeaturedJobs);
 router.get("/jobs/categories", job_controller_1.getJobCategories);
+router.get("/jobs/mine", auth_middleware_1.requireAuth, auth_middleware_1.requireRecruiter, (0, error_middleware_1.validate)(job_validation_1.jobQuerySchema, "query"), job_controller_1.getMyJobs);
 router.post("/jobs", auth_middleware_1.requireAuth, auth_middleware_1.requireRecruiter, (0, error_middleware_1.validate)(job_validation_1.createJobSchema), job_controller_1.createJob);
 router.get("/jobs", auth_middleware_1.optionalAuth, (0, error_middleware_1.validate)(job_validation_1.jobQuerySchema, "query"), job_controller_1.listJobs);
 router.get("/jobs/:id", auth_middleware_1.optionalAuth, (0, error_middleware_1.validate)(job_validation_1.jobIdParamSchema, "params"), job_controller_1.getJob);

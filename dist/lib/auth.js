@@ -6,6 +6,7 @@ const better_auth_1 = require("better-auth");
 const mongodb_1 = require("better-auth/adapters/mongodb");
 const database_1 = require("../config/database");
 const env_1 = require("../config/env");
+// Better Auth options typing is intentionally loose here due to adapter generics
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let authInstance = null;
 function createAuth() {
@@ -18,7 +19,7 @@ function createAuth() {
         database: (0, mongodb_1.mongodbAdapter)(db, { client }),
         secret: env_1.env.BETTER_AUTH_SECRET,
         baseURL: env_1.env.BETTER_AUTH_URL,
-        trustedOrigins: [env_1.env.FRONTEND_URL],
+        trustedOrigins: [env_1.env.FRONTEND_URL, "http://localhost:3000", "http://127.0.0.1:3000"],
         emailAndPassword: {
             enabled: true,
             minPasswordLength: 8,
@@ -39,13 +40,11 @@ function createAuth() {
             },
         },
         advanced: {
-            crossSubDomainCookies: {
-                enabled: false,
-            },
             defaultCookieAttributes: {
-                sameSite: env_1.env.NODE_ENV === "production" ? "none" : "lax",
+                sameSite: "lax",
                 secure: env_1.env.NODE_ENV === "production",
                 httpOnly: true,
+                path: "/",
             },
         },
     });

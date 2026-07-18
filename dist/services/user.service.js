@@ -35,8 +35,18 @@ class UserService {
         if (requester.role !== "admin" && requester._id?.toString() !== id) {
             throw new errors_1.ForbiddenError("You can only update your own profile");
         }
-        if (updates.role && requester.role !== "admin") {
-            delete updates.role;
+        if (updates.role) {
+            const isSelf = requester._id?.toString() === id;
+            const requestedRole = updates.role;
+            const canSelfAssign = isSelf &&
+                (requestedRole === "candidate" || requestedRole === "recruiter") &&
+                requester.role !== "admin";
+            if (requester.role !== "admin" && !canSelfAssign) {
+                delete updates.role;
+            }
+            if (requestedRole === "admin" && requester.role !== "admin") {
+                delete updates.role;
+            }
         }
         if (updates.isPremium !== undefined && requester.role !== "admin") {
             delete updates.isPremium;
@@ -53,6 +63,17 @@ class UserService {
         }
         const updated = await user_repository_1.userRepository.updateById(id, {
             $set: { ...updates, updatedAt: new Date() },
+        });
+        return (0, helpers_1.omitPassword)(updated);
+    }
+    async setMyRole(user, role) {
+        if (!user._id)
+            throw new errors_1.ForbiddenError("Invalid user");
+        if (user.role === "admin") {
+            throw new errors_1.ForbiddenError("Admin role cannot be changed here");
+        }
+        const updated = await user_repository_1.userRepository.updateById(user._id.toString(), {
+            $set: { role, updatedAt: new Date() },
         });
         return (0, helpers_1.omitPassword)(updated);
     }

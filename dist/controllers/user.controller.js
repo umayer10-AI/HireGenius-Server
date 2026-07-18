@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearRecentlyViewed = exports.clearSearchHistory = exports.deleteResume = exports.uploadResume = exports.uploadAvatar = exports.deleteUser = exports.updateUser = exports.getUser = exports.listUsers = exports.getMe = void 0;
+exports.setMyRole = exports.clearRecentlyViewed = exports.clearSearchHistory = exports.deleteResume = exports.uploadResume = exports.uploadAvatar = exports.deleteUser = exports.updateUser = exports.getUser = exports.listUsers = exports.getMe = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const user_service_1 = require("../services/user.service");
 const response_1 = require("../utils/response");
@@ -51,5 +51,9 @@ exports.clearSearchHistory = (0, error_middleware_1.asyncHandler)(async (req, re
 exports.clearRecentlyViewed = (0, error_middleware_1.asyncHandler)(async (req, res) => {
     const data = await user_service_1.userService.clearRecentlyViewed(req.user._id.toString());
     return (0, response_1.sendSuccess)(res, data, "Recently viewed cleared");
+});
+exports.setMyRole = (0, error_middleware_1.asyncHandler)(async (req, res) => {
+    const data = await user_service_1.userService.setMyRole(req.user, req.body.role);
+    return (0, response_1.sendSuccess)(res, data, "Role updated");
 });
 //# sourceMappingURL=user.controller.js.map

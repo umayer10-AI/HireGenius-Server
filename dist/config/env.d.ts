@@ -15,6 +15,7 @@ export declare const env: {
     CLOUDINARY_UPLOAD_PRESET: string;
     OPENAI_API_KEY: string;
     GEMINI_API_KEY: string;
+    GROQ_API_KEY: string;
     AI_PROVIDER: "openai" | "gemini" | "claude" | "groq" | "ollama";
     SMTP_HOST: string;
     SMTP_PORT: number;

@@ -59,6 +59,7 @@ export declare class UserService {
         meta: import("../types").PaginationMeta;
     }>;
     update(id: string, updates: Partial<UserDocument>, requester: UserDocument): Promise<Omit<UserDocument, "password">>;
+    setMyRole(user: UserDocument, role: "candidate" | "recruiter"): Promise<Omit<UserDocument, "password">>;
     remove(id: string, requester: UserDocument): Promise<{
         deleted: boolean;
     }>;

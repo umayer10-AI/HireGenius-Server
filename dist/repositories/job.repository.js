@@ -10,10 +10,11 @@ class JobRepository extends base_repository_1.BaseRepository {
     }
     buildFilter(params) {
         const filter = {};
-        if (params.status) {
+        if (params.status && params.status !== "all") {
             filter.status = params.status;
         }
-        else {
+        else if (!params.createdBy) {
+            // Public listings default to active; recruiter "mine" can see all statuses
             filter.status = "active";
         }
         if (params.category)

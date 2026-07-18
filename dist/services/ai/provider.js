@@ -41,6 +41,41 @@ class OpenAIProvider {
         return full;
     }
 }
+class GroqProvider {
+    name = "groq";
+    client;
+    constructor(apiKey) {
+        this.client = new openai_1.default({
+            apiKey,
+            baseURL: "https://api.groq.com/openai/v1",
+        });
+    }
+    async complete(messages, options) {
+        const response = await this.client.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages,
+            temperature: options?.temperature ?? 0.7,
+        });
+        return response.choices[0]?.message?.content?.trim() || "";
+    }
+    async stream(messages, onChunk, options) {
+        const stream = await this.client.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages,
+            temperature: options?.temperature ?? 0.7,
+            stream: true,
+        });
+        let full = "";
+        for await (const part of stream) {
+            const content = part.choices[0]?.delta?.content || "";
+            if (content) {
+                full += content;
+                onChunk(content);
+            }
+        }
+        return full;
+    }
+}
 class GeminiProvider {
     apiKey;
     name = "gemini";
@@ -77,27 +112,77 @@ class GeminiProvider {
         return data.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
     }
     async stream(messages, onChunk, options) {
-        const text = await this.complete(messages, options);
-        const chunkSize = 24;
-        for (let i = 0; i < text.length; i += chunkSize) {
-            const chunk = text.slice(i, i + chunkSize);
-            onChunk(chunk);
+        const { system, contents } = this.toGeminiContents(messages);
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${this.apiKey}`;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                systemInstruction: system ? { parts: [{ text: system }] } : undefined,
+                contents,
+                generationConfig: { temperature: options?.temperature ?? 0.7 },
+            }),
+        });
+        if (!response.ok || !response.body) {
+            const errText = await response.text();
+            throw new errors_1.AppError(`Gemini API error: ${errText}`, 502);
         }
-        return text;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let full = "";
+        let buffer = "";
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done)
+                break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() || "";
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed.startsWith("data:"))
+                    continue;
+                const payload = trimmed.slice(5).trim();
+                if (!payload || payload === "[DONE]")
+                    continue;
+                try {
+                    const parsed = JSON.parse(payload);
+                    const text = parsed.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
+                    if (text) {
+                        full += text;
+                        onChunk(text);
+                    }
+                }
+                catch {
+                    // ignore partial SSE chunks
+                }
+            }
+        }
+        if (!full) {
+            return this.complete(messages, options);
+        }
+        return full;
     }
 }
 function getAIProvider() {
-    const provider = env_1.env.AI_PROVIDER;
-    if (provider === "gemini") {
-        if (!env_1.env.GEMINI_API_KEY) {
-            throw new errors_1.AppError("GEMINI_API_KEY is not configured", 500);
-        }
-        return new GeminiProvider(env_1.env.GEMINI_API_KEY);
+    const provider = env_1.env.AI_PROVIDER || "groq";
+    switch (provider) {
+        case "openai":
+            if (!env_1.env.OPENAI_API_KEY) {
+                throw new errors_1.AppError("OPENAI_API_KEY is not configured", 500);
+            }
+            return new OpenAIProvider(env_1.env.OPENAI_API_KEY);
+        case "groq":
+            if (!env_1.env.GROQ_API_KEY) {
+                throw new errors_1.AppError("GROQ_API_KEY is not configured", 500);
+            }
+            return new GroqProvider(env_1.env.GROQ_API_KEY);
+        default:
+            if (!env_1.env.GEMINI_API_KEY) {
+                throw new errors_1.AppError("GEMINI_API_KEY is not configured", 500);
+            }
+            return new GeminiProvider(env_1.env.GEMINI_API_KEY);
     }
-    if (!env_1.env.OPENAI_API_KEY) {
-        throw new errors_1.AppError("OPENAI_API_KEY is not configured", 500);
-    }
-    return new OpenAIProvider(env_1.env.OPENAI_API_KEY);
 }
 async function safeAIComplete(messages, options) {
     try {
@@ -106,6 +191,8 @@ async function safeAIComplete(messages, options) {
     }
     catch (error) {
         logger_1.logger.error("AI completion failed", error);
+        if (error instanceof errors_1.AppError)
+            throw error;
         throw new errors_1.AppError("AI service is temporarily unavailable. Please try again in a moment.", 503);
     }
 }

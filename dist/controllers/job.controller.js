@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getJobCategories = exports.getFeaturedJobs = exports.uploadJobBanner = exports.deleteJob = exports.updateJob = exports.getJob = exports.listJobs = exports.createJob = void 0;
+exports.getJobCategories = exports.getMyJobs = exports.getFeaturedJobs = exports.uploadJobBanner = exports.deleteJob = exports.updateJob = exports.getJob = exports.listJobs = exports.createJob = void 0;
 const error_middleware_1 = require("../middlewares/error.middleware");
 const job_service_1 = require("../services/job.service");
 const response_1 = require("../utils/response");
@@ -31,6 +31,10 @@ exports.uploadJobBanner = (0, error_middleware_1.asyncHandler)(async (req, res) 
 exports.getFeaturedJobs = (0, error_middleware_1.asyncHandler)(async (_req, res) => {
     const result = await job_service_1.jobService.getFeatured(8);
     return (0, response_1.sendSuccess)(res, result.data, "Featured jobs fetched", 200, result.meta);
+});
+exports.getMyJobs = (0, error_middleware_1.asyncHandler)(async (req, res) => {
+    const result = await job_service_1.jobService.getMine(req.user, req.query);
+    return (0, response_1.sendSuccess)(res, result.data, "Your jobs fetched", 200, result.meta);
 });
 exports.getJobCategories = (0, error_middleware_1.asyncHandler)(async (_req, res) => {
     const data = await job_service_1.jobService.getCategories();

@@ -81,7 +81,10 @@ class JobService {
             updates.slug = (0, helpers_1.uniqueSlug)(updates.title);
         }
         if (updates.companyId) {
-            updates.companyId = new mongodb_1.ObjectId(updates.companyId);
+            updates.companyId = new mongodb_1.ObjectId(String(updates.companyId));
+        }
+        if (updates.applicationDeadline) {
+            updates.applicationDeadline = new Date(updates.applicationDeadline);
         }
         return job_repository_1.jobRepository.updateById(id, {
             $set: { ...updates, updatedAt: new Date() },
@@ -111,6 +114,15 @@ class JobService {
     }
     async getFeatured(limit = 8) {
         return this.list({ page: 1, limit, featured: true, status: "active", sort: "newest" });
+    }
+    async getMine(user, params) {
+        if (!user._id)
+            throw new errors_1.ForbiddenError("Invalid user");
+        return this.list({
+            ...params,
+            createdBy: user._id.toString(),
+            status: params.status || "all",
+        });
     }
     async getCategories() {
         const jobs = await job_repository_1.jobRepository.findMany({ status: "active" });
