@@ -1,0 +1,11 @@
+# Backend
+cd backend
+npm install
+# Configure .env then:
+npm run build
+# Start command:
+npm start
+
+# Set env vars on Render:
+# MONGODB_URI, MONGODB_DB_NAME, BETTER_AUTH_SECRET, BETTER_AUTH_URL,
+# FRONTEND_URL, CLOUDINARY_*, OPENAI_API_KEY or GEMINI_API_KEY, GOOGLE_*

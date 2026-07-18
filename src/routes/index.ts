@@ -1,0 +1,224 @@
+import { Router } from "express";
+import {
+  clearRecentlyViewed,
+  clearSearchHistory,
+  deleteResume,
+  deleteUser,
+  getMe,
+  getUser,
+  listUsers,
+  setMyRole,
+  updateUser,
+  uploadAvatar,
+  uploadResume,
+} from "../controllers/user.controller";
+import {
+  createCompany,
+  deleteCompany,
+  getCompany,
+  getMyCompanies,
+  listCompanies,
+  updateCompany,
+  uploadCompanyBanner,
+  uploadCompanyLogo,
+} from "../controllers/company.controller";
+import {
+  createJob,
+  deleteJob,
+  getFeaturedJobs,
+  getJob,
+  getJobCategories,
+  getMyJobs,
+  listJobs,
+  updateJob,
+  uploadJobBanner,
+} from "../controllers/job.controller";
+import {
+  aiChat,
+  candidateMatch,
+  createApplication,
+  createBlog,
+  createReview,
+  deleteAIChat,
+  deleteApplication,
+  deleteBlog,
+  deleteNotification,
+  deleteReview,
+  generateCoverLetter,
+  generateJobDescription,
+  generateResume,
+  getApplication,
+  getBlogBySlug,
+  getDashboard,
+  getPlatformStats,
+  interviewPrep,
+  listAIChats,
+  listApplications,
+  listBlogs,
+  listNotifications,
+  listReviews,
+  listSavedJobs,
+  markAllNotificationsRead,
+  markNotificationRead,
+  recommendJobs,
+  removeSavedJob,
+  renameAIChat,
+  saveJob,
+  skillGap,
+  submitContact,
+  subscribeNewsletter,
+  updateApplication,
+  updateBlog,
+  updateReview,
+} from "../controllers/misc.controller";
+import {
+  optionalAuth,
+  requireAdmin,
+  requireAuth,
+  requireCandidate,
+  requireRecruiter,
+} from "../middlewares/auth.middleware";
+import { validate } from "../middlewares/error.middleware";
+import { uploadDocument, uploadImage } from "../middlewares/upload.middleware";
+import { paginationSchema } from "../validations/common.validation";
+import { updateUserSchema, userIdParamSchema, userQuerySchema } from "../validations/user.validation";
+import {
+  companyIdParamSchema,
+  companyQuerySchema,
+  createCompanySchema,
+  updateCompanySchema,
+} from "../validations/company.validation";
+import {
+  createJobSchema,
+  jobIdParamSchema,
+  jobQuerySchema,
+  updateJobSchema,
+} from "../validations/job.validation";
+import {
+  applicationIdParamSchema,
+  applicationQuerySchema,
+  createApplicationSchema,
+  updateApplicationSchema,
+} from "../validations/application.validation";
+import {
+  createReviewSchema,
+  reviewIdParamSchema,
+  reviewQuerySchema,
+  updateReviewSchema,
+} from "../validations/review.validation";
+import {
+  blogIdParamSchema,
+  blogQuerySchema,
+  blogSlugParamSchema,
+  createBlogSchema,
+  updateBlogSchema,
+} from "../validations/blog.validation";
+import {
+  candidateMatchSchema,
+  chatSchema,
+  coverLetterSchema,
+  interviewPrepSchema,
+  jobDescriptionSchema,
+  jobRecommendationSchema,
+  renameChatSchema,
+  resumeGenerateSchema,
+  skillGapSchema,
+} from "../validations/ai.validation";
+import { z } from "zod";
+import { objectIdSchema } from "../validations/common.validation";
+
+const router = Router();
+
+router.get("/health", (_req, res) => {
+  res.json({ success: true, message: "HireGenius API is healthy", data: { status: "ok" } });
+});
+
+router.get("/stats", getPlatformStats);
+
+router.get("/me", requireAuth, getMe);
+router.patch(
+  "/me/role",
+  requireAuth,
+  validate(z.object({ role: z.enum(["candidate", "recruiter"]) })),
+  setMyRole
+);
+
+router.get("/users", requireAuth, requireAdmin, validate(userQuerySchema, "query"), listUsers);
+router.get("/users/:id", optionalAuth, validate(userIdParamSchema, "params"), getUser);
+router.patch("/users/:id", requireAuth, validate(userIdParamSchema, "params"), validate(updateUserSchema), updateUser);
+router.delete("/users/:id", requireAuth, validate(userIdParamSchema, "params"), deleteUser);
+router.post("/users/me/avatar", requireAuth, uploadImage.single("file"), uploadAvatar);
+router.post("/users/me/resume", requireAuth, uploadDocument.single("file"), uploadResume);
+router.delete("/users/me/resume", requireAuth, deleteResume);
+router.delete("/users/me/search-history", requireAuth, clearSearchHistory);
+router.delete("/users/me/recently-viewed", requireAuth, clearRecentlyViewed);
+
+router.post("/companies", requireAuth, requireRecruiter, validate(createCompanySchema), createCompany);
+router.get("/companies", validate(companyQuerySchema, "query"), listCompanies);
+router.get("/companies/mine", requireAuth, requireRecruiter, getMyCompanies);
+router.get("/companies/:id", validate(companyIdParamSchema, "params"), getCompany);
+router.patch("/companies/:id", requireAuth, requireRecruiter, validate(companyIdParamSchema, "params"), validate(updateCompanySchema), updateCompany);
+router.delete("/companies/:id", requireAuth, requireRecruiter, validate(companyIdParamSchema, "params"), deleteCompany);
+router.post("/companies/:id/logo", requireAuth, requireRecruiter, uploadImage.single("file"), uploadCompanyLogo);
+router.post("/companies/:id/banner", requireAuth, requireRecruiter, uploadImage.single("file"), uploadCompanyBanner);
+
+router.get("/jobs/featured", getFeaturedJobs);
+router.get("/jobs/categories", getJobCategories);
+router.get("/jobs/mine", requireAuth, requireRecruiter, validate(jobQuerySchema, "query"), getMyJobs);
+router.post("/jobs", requireAuth, requireRecruiter, validate(createJobSchema), createJob);
+router.get("/jobs", optionalAuth, validate(jobQuerySchema, "query"), listJobs);
+router.get("/jobs/:id", optionalAuth, validate(jobIdParamSchema, "params"), getJob);
+router.patch("/jobs/:id", requireAuth, requireRecruiter, validate(jobIdParamSchema, "params"), validate(updateJobSchema), updateJob);
+router.delete("/jobs/:id", requireAuth, requireRecruiter, validate(jobIdParamSchema, "params"), deleteJob);
+router.post("/jobs/:id/banner", requireAuth, requireRecruiter, uploadImage.single("file"), uploadJobBanner);
+
+router.post("/applications", requireAuth, requireCandidate, uploadDocument.single("resume"), validate(createApplicationSchema), createApplication);
+router.get("/applications", requireAuth, validate(applicationQuerySchema, "query"), listApplications);
+router.get("/applications/:id", requireAuth, validate(applicationIdParamSchema, "params"), getApplication);
+router.patch("/applications/:id", requireAuth, requireRecruiter, validate(applicationIdParamSchema, "params"), validate(updateApplicationSchema), updateApplication);
+router.delete("/applications/:id", requireAuth, validate(applicationIdParamSchema, "params"), deleteApplication);
+
+router.post("/saved-jobs", requireAuth, requireCandidate, validate(z.object({ jobId: objectIdSchema })), saveJob);
+router.get("/saved-jobs", requireAuth, requireCandidate, validate(paginationSchema, "query"), listSavedJobs);
+router.delete("/saved-jobs/:id", requireAuth, requireCandidate, removeSavedJob);
+
+router.post("/reviews", requireAuth, validate(createReviewSchema), createReview);
+router.get("/reviews", validate(reviewQuerySchema, "query"), listReviews);
+router.patch("/reviews/:id", requireAuth, validate(reviewIdParamSchema, "params"), validate(updateReviewSchema), updateReview);
+router.delete("/reviews/:id", requireAuth, validate(reviewIdParamSchema, "params"), deleteReview);
+
+router.get("/blogs", validate(blogQuerySchema, "query"), listBlogs);
+router.get("/blogs/:slug", validate(blogSlugParamSchema, "params"), getBlogBySlug);
+router.post("/blogs", requireAuth, requireAdmin, validate(createBlogSchema), createBlog);
+router.patch("/blogs/:id", requireAuth, requireAdmin, validate(blogIdParamSchema, "params"), validate(updateBlogSchema), updateBlog);
+router.delete("/blogs/:id", requireAuth, requireAdmin, validate(blogIdParamSchema, "params"), deleteBlog);
+
+router.get("/notifications", requireAuth, listNotifications);
+router.patch("/notifications/read-all", requireAuth, markAllNotificationsRead);
+router.patch("/notifications/:id", requireAuth, markNotificationRead);
+router.delete("/notifications/:id", requireAuth, deleteNotification);
+
+router.get("/dashboard", requireAuth, getDashboard);
+
+router.post("/contact", validate(z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  subject: z.string().min(3),
+  message: z.string().min(10),
+})), submitContact);
+
+router.post("/newsletter", validate(z.object({ email: z.string().email() })), subscribeNewsletter);
+
+router.post("/ai/resume", requireAuth, validate(resumeGenerateSchema), generateResume);
+router.post("/ai/cover-letter", requireAuth, validate(coverLetterSchema), generateCoverLetter);
+router.post("/ai/job-recommendation", requireAuth, validate(jobRecommendationSchema), recommendJobs);
+router.post("/ai/skill-gap", requireAuth, validate(skillGapSchema), skillGap);
+router.post("/ai/interview-prep", requireAuth, validate(interviewPrepSchema), interviewPrep);
+router.post("/ai/job-description", requireAuth, requireRecruiter, validate(jobDescriptionSchema), generateJobDescription);
+router.post("/ai/candidate-match", requireAuth, requireRecruiter, validate(candidateMatchSchema), candidateMatch);
+router.post("/ai/chat", requireAuth, validate(chatSchema), aiChat);
+router.get("/ai/chats", requireAuth, listAIChats);
+router.patch("/ai/chats/:id", requireAuth, validate(renameChatSchema), renameAIChat);
+router.delete("/ai/chats/:id", requireAuth, deleteAIChat);
+
+export default router;

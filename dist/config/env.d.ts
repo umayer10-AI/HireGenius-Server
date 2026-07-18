@@ -1,0 +1,29 @@
+export declare const env: {
+    NODE_ENV: "development" | "production" | "test";
+    PORT: number;
+    FRONTEND_URL: string;
+    MONGODB_URI: string;
+    MONGODB_DB_NAME: string;
+    JWT_SECRET: string;
+    BETTER_AUTH_SECRET: string;
+    BETTER_AUTH_URL: string;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
+    CLOUDINARY_CLOUD_NAME: string;
+    CLOUDINARY_API_KEY: string;
+    CLOUDINARY_API_SECRET: string;
+    CLOUDINARY_UPLOAD_PRESET: string;
+    OPENAI_API_KEY: string;
+    GEMINI_API_KEY: string;
+    AI_PROVIDER: "openai" | "gemini" | "claude" | "groq" | "ollama";
+    SMTP_HOST: string;
+    SMTP_PORT: number;
+    SMTP_USER: string;
+    SMTP_PASS: string;
+    EMAIL_FROM: string;
+    RATE_LIMIT_WINDOW_MS: number;
+    RATE_LIMIT_MAX: number;
+    AI_RATE_LIMIT_FREE: number;
+    AI_RATE_LIMIT_PREMIUM: number;
+};
+//# sourceMappingURL=env.d.ts.map
