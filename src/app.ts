@@ -25,9 +25,9 @@ export function createApp() {
     cors({
       origin: [env.FRONTEND_URL, "http://localhost:3000"],
       credentials: true,
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
-      exposedHeaders: ["Set-Cookie"],
+      // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      // allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
+      // exposedHeaders: ["Set-Cookie"],
     })
   );
 
