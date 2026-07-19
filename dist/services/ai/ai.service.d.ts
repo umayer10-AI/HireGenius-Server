@@ -1,4 +1,4 @@
-import type { UserDocument } from "../../interfaces/models";
+import type { UserDocument } from "../../interfaces/models.js";
 export declare class AIService {
     private assertRateLimit;
     generateResume(user: UserDocument, input: {
@@ -27,8 +27,8 @@ export declare class AIService {
     }>;
     recommendJobs(user: UserDocument, limit?: number): Promise<{
         recommendations: {
-            job: import("../../interfaces/models").JobDocument | null;
-            company: import("../../interfaces/models").CompanyDocument | null;
+            job: import("../../interfaces/models.js").JobDocument | null;
+            company: import("../../interfaces/models.js").CompanyDocument | null;
             jobId: string;
             score: number;
             reasons: string[];
@@ -60,15 +60,15 @@ export declare class AIService {
         message: string;
         chatId?: string;
     }, onChunk?: (chunk: string) => void): Promise<{
-        chat: import("../../interfaces/models").AIChatDocument;
+        chat: import("../../interfaces/models.js").AIChatDocument;
         reply: string;
         suggestions: string[];
     }>;
     listChats(user: UserDocument, page: number, limit: number): Promise<{
-        data: import("../../interfaces/models").AIChatDocument[];
+        data: import("../../interfaces/models.js").AIChatDocument[];
         total: number;
     }>;
-    renameChat(user: UserDocument, chatId: string, title: string): Promise<import("../../interfaces/models").AIChatDocument>;
+    renameChat(user: UserDocument, chatId: string, title: string): Promise<import("../../interfaces/models.js").AIChatDocument>;
     deleteChat(user: UserDocument, chatId: string): Promise<{
         deleted: boolean;
     }>;

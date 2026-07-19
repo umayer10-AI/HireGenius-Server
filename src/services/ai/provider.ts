@@ -1,7 +1,7 @@
 import OpenAI from "openai";
-import { env } from "../../config/env";
-import { AppError } from "../../utils/errors";
-import { logger } from "../../utils/logger";
+import { env } from "../../config/env.js";
+import { AppError } from "../../utils/errors.js";
+import { logger } from "../../utils/logger.js";
 
 export interface AIMessage {
   role: "system" | "user" | "assistant";

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../middlewares/error.middleware";
-import { companyService } from "../services/company.service";
-import { sendSuccess } from "../utils/response";
+import { asyncHandler } from "../middlewares/error.middleware.js";
+import { companyService } from "../services/company.service.js";
+import { sendSuccess } from "../utils/response.js";
 
 export const createCompany = asyncHandler(async (req: Request, res: Response) => {
   const data = await companyService.create(req.body, req.user!);

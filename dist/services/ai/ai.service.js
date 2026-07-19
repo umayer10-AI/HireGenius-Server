@@ -1,32 +1,29 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aiService = exports.AIService = void 0;
-const env_1 = require("../../config/env");
-const company_repository_1 = require("../../repositories/company.repository");
-const job_repository_1 = require("../../repositories/job.repository");
-const user_repository_1 = require("../../repositories/user.repository");
-const repositories_1 = require("../../repositories");
-const errors_1 = require("../../utils/errors");
-const prompts_1 = require("../../prompts");
-const provider_1 = require("./provider");
+import { env } from "../../config/env.js";
+import { companyRepository } from "../../repositories/company.repository.js";
+import { jobRepository } from "../../repositories/job.repository.js";
+import { userRepository } from "../../repositories/user.repository.js";
+import { aiRepository } from "../../repositories/index.js";
+import { AppError, ForbiddenError, NotFoundError } from "../../utils/errors.js";
+import { candidateMatchPrompt, careerChatPrompt, coverLetterPrompt, interviewPrepPrompt, jobDescriptionPrompt, recommendationPrompt, resumePrompt, skillGapPrompt, } from "../../prompts/index.js";
+import { getAIProvider, safeAIComplete } from "./provider.js";
 function parseJson(text) {
     const cleaned = text.replace(/```json|```/g, "").trim();
     return JSON.parse(cleaned);
 }
-class AIService {
+export class AIService {
     assertRateLimit(user) {
-        const limit = user.isPremium ? env_1.env.AI_RATE_LIMIT_PREMIUM : env_1.env.AI_RATE_LIMIT_FREE;
+        const limit = user.isPremium ? env.AI_RATE_LIMIT_PREMIUM : env.AI_RATE_LIMIT_FREE;
         // Soft gate: premium unlimited feel via high limit; free limited via env
         if (!user.isPremium && limit <= 0) {
-            throw new errors_1.ForbiddenError("AI usage limit reached. Upgrade to Premium for more access.");
+            throw new ForbiddenError("AI usage limit reached. Upgrade to Premium for more access.");
         }
     }
     async generateResume(user, input) {
         this.assertRateLimit(user);
-        const content = await (0, provider_1.safeAIComplete)([
+        const content = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.resumePrompt)({
+                content: resumePrompt({
                     name: input.name,
                     education: input.education,
                     experience: input.experience,
@@ -42,7 +39,7 @@ class AIService {
         ]);
         if (user._id) {
             const now = new Date();
-            await repositories_1.aiRepository.saveResumeGeneration({
+            await aiRepository.saveResumeGeneration({
                 userId: user._id,
                 resumePrompt: input.targetJob,
                 generatedResume: content,
@@ -54,10 +51,10 @@ class AIService {
     }
     async generateCoverLetter(user, input) {
         this.assertRateLimit(user);
-        const content = await (0, provider_1.safeAIComplete)([
+        const content = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.coverLetterPrompt)({
+                content: coverLetterPrompt({
                     jobTitle: input.jobTitle,
                     companyName: input.companyName,
                     resume: input.resume || user.resume || "",
@@ -71,9 +68,9 @@ class AIService {
     }
     async recommendJobs(user, limit = 6) {
         this.assertRateLimit(user);
-        const jobs = await job_repository_1.jobRepository.findMany({ status: "active" }, { limit: 40, sort: { createdAt: -1 } });
+        const jobs = await jobRepository.findMany({ status: "active" }, { limit: 40, sort: { createdAt: -1 } });
         const jobPayload = await Promise.all(jobs.map(async (job) => {
-            const company = await company_repository_1.companyRepository.findById(job.companyId);
+            const company = await companyRepository.findById(job.companyId);
             return {
                 id: job._id.toString(),
                 title: job.title,
@@ -83,10 +80,10 @@ class AIService {
                 salary: `${job.salary.min}-${job.salary.max} ${job.currency}`,
             };
         }));
-        const raw = await (0, provider_1.safeAIComplete)([
+        const raw = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.recommendationPrompt)({
+                content: recommendationPrompt({
                     skills: user.skills || [],
                     experience: JSON.stringify(user.experience || []),
                     location: user.location,
@@ -107,8 +104,8 @@ class AIService {
             }));
         }
         const detailed = await Promise.all(matches.slice(0, limit).map(async (match) => {
-            const job = await job_repository_1.jobRepository.findById(match.jobId);
-            const company = job ? await company_repository_1.companyRepository.findById(job.companyId) : null;
+            const job = await jobRepository.findById(match.jobId);
+            const company = job ? await companyRepository.findById(job.companyId) : null;
             return { ...match, job, company };
         }));
         return { recommendations: detailed.filter((d) => d.job) };
@@ -118,14 +115,14 @@ class AIService {
         let requirements = input.jobRequirements || [];
         let targetRole = input.targetRole || "Target Role";
         if (input.jobId) {
-            const job = await job_repository_1.jobRepository.findByIdOrThrow(input.jobId, "Job not found");
+            const job = await jobRepository.findByIdOrThrow(input.jobId, "Job not found");
             requirements = [...job.skills, ...job.requirements];
             targetRole = job.title;
         }
-        const raw = await (0, provider_1.safeAIComplete)([
+        const raw = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.skillGapPrompt)({
+                content: skillGapPrompt({
                     currentSkills: user.skills || [],
                     requirements,
                     targetRole,
@@ -146,10 +143,10 @@ class AIService {
     }
     async interviewPrep(user, input) {
         this.assertRateLimit(user);
-        const raw = await (0, provider_1.safeAIComplete)([
+        const raw = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.interviewPrepPrompt)({
+                content: interviewPrepPrompt({
                     jobTitle: input.jobTitle,
                     difficulty: input.difficulty || "medium",
                     category: input.category || "all",
@@ -160,18 +157,18 @@ class AIService {
             return parseJson(raw);
         }
         catch {
-            throw new errors_1.AppError("Failed to parse interview preparation response", 502);
+            throw new AppError("Failed to parse interview preparation response", 502);
         }
     }
     async generateJobDescription(user, input) {
         this.assertRateLimit(user);
         if (user.role !== "recruiter" && user.role !== "admin") {
-            throw new errors_1.ForbiddenError("Only recruiters can generate job descriptions");
+            throw new ForbiddenError("Only recruiters can generate job descriptions");
         }
-        const raw = await (0, provider_1.safeAIComplete)([
+        const raw = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.jobDescriptionPrompt)({
+                content: jobDescriptionPrompt({
                     jobTitle: input.jobTitle,
                     category: input.category,
                     skills: input.skills,
@@ -185,20 +182,20 @@ class AIService {
             return parseJson(raw);
         }
         catch {
-            throw new errors_1.AppError("Failed to parse job description", 502);
+            throw new AppError("Failed to parse job description", 502);
         }
     }
     async candidateMatch(user, input) {
         this.assertRateLimit(user);
         if (user.role !== "recruiter" && user.role !== "admin") {
-            throw new errors_1.ForbiddenError("Only recruiters can run candidate match");
+            throw new ForbiddenError("Only recruiters can run candidate match");
         }
-        const job = await job_repository_1.jobRepository.findByIdOrThrow(input.jobId, "Job not found");
-        const candidate = await user_repository_1.userRepository.findByIdOrThrow(input.candidateId, "Candidate not found");
-        const raw = await (0, provider_1.safeAIComplete)([
+        const job = await jobRepository.findByIdOrThrow(input.jobId, "Job not found");
+        const candidate = await userRepository.findByIdOrThrow(input.candidateId, "Candidate not found");
+        const raw = await safeAIComplete([
             {
                 role: "user",
-                content: (0, prompts_1.candidateMatchPrompt)({
+                content: candidateMatchPrompt({
                     jobTitle: job.title,
                     jobSkills: job.skills,
                     requirements: job.requirements,
@@ -216,20 +213,20 @@ class AIService {
             return parseJson(raw);
         }
         catch {
-            throw new errors_1.AppError("Failed to parse candidate match analysis", 502);
+            throw new AppError("Failed to parse candidate match analysis", 502);
         }
     }
     async chat(user, input, onChunk) {
         this.assertRateLimit(user);
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
-        let chat = input.chatId ? await repositories_1.aiRepository.getChat(input.chatId) : null;
+            throw new ForbiddenError("Invalid user");
+        let chat = input.chatId ? await aiRepository.getChat(input.chatId) : null;
         if (input.chatId && (!chat || chat.userId.toString() !== user._id.toString())) {
-            throw new errors_1.NotFoundError("Chat not found");
+            throw new NotFoundError("Chat not found");
         }
         const system = {
             role: "system",
-            content: (0, prompts_1.careerChatPrompt)({
+            content: careerChatPrompt({
                 userName: user.name,
                 role: user.role,
                 skills: user.skills || [],
@@ -248,7 +245,7 @@ class AIService {
             ...history,
             { role: "user", content: input.message },
         ];
-        const provider = (0, provider_1.getAIProvider)();
+        const provider = getAIProvider();
         const reply = onChunk
             ? await provider.stream(messages, onChunk)
             : await provider.complete(messages);
@@ -256,7 +253,7 @@ class AIService {
         const userMsg = { role: "user", content: input.message, createdAt: now };
         const assistantMsg = { role: "assistant", content: reply, createdAt: new Date() };
         if (!chat) {
-            chat = await repositories_1.aiRepository.createChat({
+            chat = await aiRepository.createChat({
                 userId: user._id,
                 title: input.message.slice(0, 60),
                 conversation: [userMsg, assistantMsg],
@@ -265,7 +262,7 @@ class AIService {
             });
         }
         else {
-            chat = await repositories_1.aiRepository.updateChat(chat._id.toString(), {
+            chat = await aiRepository.updateChat(chat._id.toString(), {
                 conversation: [...chat.conversation, userMsg, assistantMsg],
             });
         }
@@ -279,25 +276,24 @@ class AIService {
     }
     async listChats(user, page, limit) {
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
-        return repositories_1.aiRepository.listChats(user._id, page, limit);
+            throw new ForbiddenError("Invalid user");
+        return aiRepository.listChats(user._id, page, limit);
     }
     async renameChat(user, chatId, title) {
-        const chat = await repositories_1.aiRepository.getChat(chatId);
+        const chat = await aiRepository.getChat(chatId);
         if (!chat || chat.userId.toString() !== user._id?.toString()) {
-            throw new errors_1.NotFoundError("Chat not found");
+            throw new NotFoundError("Chat not found");
         }
-        return repositories_1.aiRepository.updateChat(chatId, { title });
+        return aiRepository.updateChat(chatId, { title });
     }
     async deleteChat(user, chatId) {
-        const chat = await repositories_1.aiRepository.getChat(chatId);
+        const chat = await aiRepository.getChat(chatId);
         if (!chat || chat.userId.toString() !== user._id?.toString()) {
-            throw new errors_1.NotFoundError("Chat not found");
+            throw new NotFoundError("Chat not found");
         }
-        await repositories_1.aiRepository.deleteChat(chatId);
+        await aiRepository.deleteChat(chatId);
         return { deleted: true };
     }
 }
-exports.AIService = AIService;
-exports.aiService = new AIService();
+export const aiService = new AIService();
 //# sourceMappingURL=ai.service.js.map

@@ -1,19 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAIProvider = getAIProvider;
-exports.safeAIComplete = safeAIComplete;
-const openai_1 = __importDefault(require("openai"));
-const env_1 = require("../../config/env");
-const errors_1 = require("../../utils/errors");
-const logger_1 = require("../../utils/logger");
+import OpenAI from "openai";
+import { env } from "../../config/env.js";
+import { AppError } from "../../utils/errors.js";
+import { logger } from "../../utils/logger.js";
 class OpenAIProvider {
     name = "openai";
     client;
     constructor(apiKey) {
-        this.client = new openai_1.default({ apiKey });
+        this.client = new OpenAI({ apiKey });
     }
     async complete(messages, options) {
         const response = await this.client.chat.completions.create({
@@ -45,7 +38,7 @@ class GroqProvider {
     name = "groq";
     client;
     constructor(apiKey) {
-        this.client = new openai_1.default({
+        this.client = new OpenAI({
             apiKey,
             baseURL: "https://api.groq.com/openai/v1",
         });
@@ -106,7 +99,7 @@ class GeminiProvider {
         });
         if (!response.ok) {
             const errText = await response.text();
-            throw new errors_1.AppError(`Gemini API error: ${errText}`, 502);
+            throw new AppError(`Gemini API error: ${errText}`, 502);
         }
         const data = (await response.json());
         return data.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
@@ -125,7 +118,7 @@ class GeminiProvider {
         });
         if (!response.ok || !response.body) {
             const errText = await response.text();
-            throw new errors_1.AppError(`Gemini API error: ${errText}`, 502);
+            throw new AppError(`Gemini API error: ${errText}`, 502);
         }
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -164,36 +157,36 @@ class GeminiProvider {
         return full;
     }
 }
-function getAIProvider() {
-    const provider = env_1.env.AI_PROVIDER || "groq";
+export function getAIProvider() {
+    const provider = env.AI_PROVIDER || "groq";
     switch (provider) {
         case "openai":
-            if (!env_1.env.OPENAI_API_KEY) {
-                throw new errors_1.AppError("OPENAI_API_KEY is not configured", 500);
+            if (!env.OPENAI_API_KEY) {
+                throw new AppError("OPENAI_API_KEY is not configured", 500);
             }
-            return new OpenAIProvider(env_1.env.OPENAI_API_KEY);
+            return new OpenAIProvider(env.OPENAI_API_KEY);
         case "groq":
-            if (!env_1.env.GROQ_API_KEY) {
-                throw new errors_1.AppError("GROQ_API_KEY is not configured", 500);
+            if (!env.GROQ_API_KEY) {
+                throw new AppError("GROQ_API_KEY is not configured", 500);
             }
-            return new GroqProvider(env_1.env.GROQ_API_KEY);
+            return new GroqProvider(env.GROQ_API_KEY);
         default:
-            if (!env_1.env.GEMINI_API_KEY) {
-                throw new errors_1.AppError("GEMINI_API_KEY is not configured", 500);
+            if (!env.GEMINI_API_KEY) {
+                throw new AppError("GEMINI_API_KEY is not configured", 500);
             }
-            return new GeminiProvider(env_1.env.GEMINI_API_KEY);
+            return new GeminiProvider(env.GEMINI_API_KEY);
     }
 }
-async function safeAIComplete(messages, options) {
+export async function safeAIComplete(messages, options) {
     try {
         const provider = getAIProvider();
         return await provider.complete(messages, options);
     }
     catch (error) {
-        logger_1.logger.error("AI completion failed", error);
-        if (error instanceof errors_1.AppError)
+        logger.error("AI completion failed", error);
+        if (error instanceof AppError)
             throw error;
-        throw new errors_1.AppError("AI service is temporarily unavailable. Please try again in a moment.", 503);
+        throw new AppError("AI service is temporarily unavailable. Please try again in a moment.", 503);
     }
 }
 //# sourceMappingURL=provider.js.map

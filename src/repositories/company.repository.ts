@@ -1,7 +1,7 @@
 import { ObjectId, type Filter } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import { COLLECTIONS } from "../constants";
-import type { CompanyDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+import type { CompanyDocument } from "../interfaces/models.js";
 
 export class CompanyRepository extends BaseRepository<CompanyDocument> {
   constructor() {

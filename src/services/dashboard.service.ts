@@ -1,11 +1,11 @@
-import { getCollection } from "../config/database";
-import { COLLECTIONS } from "../constants";
+import { getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
 import type {
   ApplicationDocument,
   CompanyDocument,
   JobDocument,
   UserDocument,
-} from "../interfaces/models";
+} from "../interfaces/models.js";
 
 export class DashboardService {
   async getCandidateDashboard(user: UserDocument) {

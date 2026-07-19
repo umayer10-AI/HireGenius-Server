@@ -1,7 +1,7 @@
 import { ObjectId, type Filter } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import { COLLECTIONS } from "../constants";
-import type { UserDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+import type { UserDocument } from "../interfaces/models.js";
 
 export class UserRepository extends BaseRepository<UserDocument> {
   constructor() {

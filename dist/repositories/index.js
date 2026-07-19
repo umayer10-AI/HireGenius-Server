@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aiRepository = exports.notificationRepository = exports.blogRepository = exports.reviewRepository = exports.savedJobRepository = exports.AIRepository = exports.NotificationRepository = exports.BlogRepository = exports.ReviewRepository = exports.SavedJobRepository = void 0;
-const mongodb_1 = require("mongodb");
-const base_repository_1 = require("./base.repository");
-const constants_1 = require("../constants");
-class SavedJobRepository extends base_repository_1.BaseRepository {
+import { ObjectId } from "mongodb";
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+export class SavedJobRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.SAVED_JOBS);
+        super(COLLECTIONS.SAVED_JOBS);
     }
     async listByUser(userId, page, limit) {
         return this.paginate({ userId }, page, limit, { createdAt: -1 });
@@ -19,15 +16,14 @@ class SavedJobRepository extends base_repository_1.BaseRepository {
         return result.deletedCount > 0;
     }
 }
-exports.SavedJobRepository = SavedJobRepository;
-class ReviewRepository extends base_repository_1.BaseRepository {
+export class ReviewRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.REVIEWS);
+        super(COLLECTIONS.REVIEWS);
     }
     async list(params) {
         const filter = {};
-        if (params.companyId && mongodb_1.ObjectId.isValid(params.companyId)) {
-            filter.companyId = new mongodb_1.ObjectId(params.companyId);
+        if (params.companyId && ObjectId.isValid(params.companyId)) {
+            filter.companyId = new ObjectId(params.companyId);
         }
         return this.paginate(filter, params.page, params.limit, { createdAt: -1 });
     }
@@ -52,10 +48,9 @@ class ReviewRepository extends base_repository_1.BaseRepository {
         return { avg: Math.round(result[0].avg * 10) / 10, count: result[0].count };
     }
 }
-exports.ReviewRepository = ReviewRepository;
-class BlogRepository extends base_repository_1.BaseRepository {
+export class BlogRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.BLOGS);
+        super(COLLECTIONS.BLOGS);
     }
     async list(params) {
         const filter = {};
@@ -81,10 +76,9 @@ class BlogRepository extends base_repository_1.BaseRepository {
         return this.findOne({ slug });
     }
 }
-exports.BlogRepository = BlogRepository;
-class NotificationRepository extends base_repository_1.BaseRepository {
+export class NotificationRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.NOTIFICATIONS);
+        super(COLLECTIONS.NOTIFICATIONS);
     }
     async listByUser(userId, page, limit) {
         return this.paginate({ receiverId: userId }, page, limit, { createdAt: -1 });
@@ -97,10 +91,9 @@ class NotificationRepository extends base_repository_1.BaseRepository {
         return result.modifiedCount;
     }
 }
-exports.NotificationRepository = NotificationRepository;
-class AIRepository {
-    chats = new base_repository_1.BaseRepository(constants_1.COLLECTIONS.AI_CHATS);
-    resumes = new base_repository_1.BaseRepository(constants_1.COLLECTIONS.RESUME_GENERATIONS);
+export class AIRepository {
+    chats = new BaseRepository(COLLECTIONS.AI_CHATS);
+    resumes = new BaseRepository(COLLECTIONS.RESUME_GENERATIONS);
     async createChat(doc) {
         return this.chats.insertOne(doc);
     }
@@ -123,10 +116,9 @@ class AIRepository {
         return this.resumes.paginate({ userId }, page, limit, { createdAt: -1 });
     }
 }
-exports.AIRepository = AIRepository;
-exports.savedJobRepository = new SavedJobRepository();
-exports.reviewRepository = new ReviewRepository();
-exports.blogRepository = new BlogRepository();
-exports.notificationRepository = new NotificationRepository();
-exports.aiRepository = new AIRepository();
+export const savedJobRepository = new SavedJobRepository();
+export const reviewRepository = new ReviewRepository();
+export const blogRepository = new BlogRepository();
+export const notificationRepository = new NotificationRepository();
+export const aiRepository = new AIRepository();
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, ZodSchema } from "zod";
-import { AppError } from "../utils/errors";
-import { sendError } from "../utils/response";
-import { logger } from "../utils/logger";
+import { AppError } from "../utils/errors.js";
+import { sendError } from "../utils/response.js";
+import { logger } from "../utils/logger.js";
 
 export function errorHandler(
   err: unknown,

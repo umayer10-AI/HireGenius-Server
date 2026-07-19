@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb";
-import { blogRepository, reviewRepository } from "../repositories";
-import { companyRepository } from "../repositories/company.repository";
-import type { BlogDocument, ReviewDocument, UserDocument } from "../interfaces/models";
-import { ConflictError, ForbiddenError } from "../utils/errors";
-import { uniqueSlug } from "../utils/helpers";
-import { buildPaginationMeta } from "../utils/response";
+import { blogRepository, reviewRepository } from "../repositories/index.js";
+import { companyRepository } from "../repositories/company.repository.js";
+import type { BlogDocument, ReviewDocument, UserDocument } from "../interfaces/models.js";
+import { ConflictError, ForbiddenError } from "../utils/errors.js";
+import { uniqueSlug } from "../utils/helpers.js";
+import { buildPaginationMeta } from "../utils/response.js";
 
 export class ReviewService {
   async create(
@@ -106,7 +106,7 @@ export class BlogService {
   async getBySlug(slug: string) {
     const blog = await blogRepository.findBySlug(slug);
     if (!blog) {
-      const { NotFoundError } = await import("../utils/errors");
+      const { NotFoundError } = await import("../utils/errors.js");
       throw new NotFoundError("Blog not found");
     }
     return blog;

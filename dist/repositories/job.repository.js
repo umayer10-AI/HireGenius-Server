@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.jobRepository = exports.JobRepository = void 0;
-const mongodb_1 = require("mongodb");
-const base_repository_1 = require("./base.repository");
-const constants_1 = require("../constants");
-class JobRepository extends base_repository_1.BaseRepository {
+import { ObjectId } from "mongodb";
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+export class JobRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.JOBS);
+        super(COLLECTIONS.JOBS);
     }
     buildFilter(params) {
         const filter = {};
@@ -27,11 +24,11 @@ class JobRepository extends base_repository_1.BaseRepository {
             filter.workMode = params.workMode;
         if (params.featured !== undefined)
             filter.featured = params.featured;
-        if (params.companyId && mongodb_1.ObjectId.isValid(params.companyId)) {
-            filter.companyId = new mongodb_1.ObjectId(params.companyId);
+        if (params.companyId && ObjectId.isValid(params.companyId)) {
+            filter.companyId = new ObjectId(params.companyId);
         }
-        if (params.createdBy && mongodb_1.ObjectId.isValid(params.createdBy)) {
-            filter.createdBy = new mongodb_1.ObjectId(params.createdBy);
+        if (params.createdBy && ObjectId.isValid(params.createdBy)) {
+            filter.createdBy = new ObjectId(params.createdBy);
         }
         if (params.location) {
             filter.location = { $regex: params.location, $options: "i" };
@@ -95,6 +92,5 @@ class JobRepository extends base_repository_1.BaseRepository {
         return this.count(filter);
     }
 }
-exports.JobRepository = JobRepository;
-exports.jobRepository = new JobRepository();
+export const jobRepository = new JobRepository();
 //# sourceMappingURL=job.repository.js.map

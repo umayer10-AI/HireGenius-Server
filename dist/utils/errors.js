@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictError = exports.ValidationError = exports.ForbiddenError = exports.UnauthorizedError = exports.NotFoundError = exports.AppError = void 0;
-class AppError extends Error {
+export class AppError extends Error {
     statusCode;
     isOperational;
     details;
@@ -13,35 +10,29 @@ class AppError extends Error {
         Object.setPrototypeOf(this, AppError.prototype);
     }
 }
-exports.AppError = AppError;
-class NotFoundError extends AppError {
+export class NotFoundError extends AppError {
     constructor(message = "Resource not found") {
         super(message, 404);
     }
 }
-exports.NotFoundError = NotFoundError;
-class UnauthorizedError extends AppError {
+export class UnauthorizedError extends AppError {
     constructor(message = "Unauthorized") {
         super(message, 401);
     }
 }
-exports.UnauthorizedError = UnauthorizedError;
-class ForbiddenError extends AppError {
+export class ForbiddenError extends AppError {
     constructor(message = "Forbidden") {
         super(message, 403);
     }
 }
-exports.ForbiddenError = ForbiddenError;
-class ValidationError extends AppError {
+export class ValidationError extends AppError {
     constructor(message = "Validation failed", details) {
         super(message, 422, details);
     }
 }
-exports.ValidationError = ValidationError;
-class ConflictError extends AppError {
+export class ConflictError extends AppError {
     constructor(message = "Conflict") {
         super(message, 409);
     }
 }
-exports.ConflictError = ConflictError;
 //# sourceMappingURL=errors.js.map

@@ -1,5 +1,5 @@
-import type { ApplicationDocument, UserDocument } from "../interfaces/models";
-import type { ApplicationStatus } from "../types";
+import type { ApplicationDocument, UserDocument } from "../interfaces/models.js";
+import type { ApplicationStatus } from "../types/index.js";
 export declare class ApplicationService {
     apply(input: {
         jobId: string;
@@ -49,7 +49,7 @@ export declare class ApplicationService {
             createdAt: Date;
             updatedAt: Date;
         }[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     private enrich;
     getById(id: string, requester: UserDocument): Promise<{

@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.companyRepository = exports.CompanyRepository = void 0;
-const base_repository_1 = require("./base.repository");
-const constants_1 = require("../constants");
-class CompanyRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+export class CompanyRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.COMPANIES);
+        super(COLLECTIONS.COMPANIES);
     }
     async list(params) {
         const filter = {};
@@ -36,6 +33,5 @@ class CompanyRepository extends base_repository_1.BaseRepository {
         await this.collection.updateOne({ _id: companyId }, { $set: { rating, reviewCount, updatedAt: new Date() } });
     }
 }
-exports.CompanyRepository = CompanyRepository;
-exports.companyRepository = new CompanyRepository();
+export const companyRepository = new CompanyRepository();
 //# sourceMappingURL=company.repository.js.map

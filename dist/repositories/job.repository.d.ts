@@ -1,6 +1,6 @@
 import { ObjectId, type Filter } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import type { JobDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import type { JobDocument } from "../interfaces/models.js";
 export interface JobListParams {
     page: number;
     limit: number;

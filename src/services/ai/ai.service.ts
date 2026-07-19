@@ -1,10 +1,10 @@
-import { env } from "../../config/env";
-import type { UserDocument } from "../../interfaces/models";
-import { companyRepository } from "../../repositories/company.repository";
-import { jobRepository } from "../../repositories/job.repository";
-import { userRepository } from "../../repositories/user.repository";
-import { aiRepository } from "../../repositories";
-import { AppError, ForbiddenError, NotFoundError } from "../../utils/errors";
+import { env } from "../../config/env.js";
+import type { UserDocument } from "../../interfaces/models.js";
+import { companyRepository } from "../../repositories/company.repository.js";
+import { jobRepository } from "../../repositories/job.repository.js";
+import { userRepository } from "../../repositories/user.repository.js";
+import { aiRepository } from "../../repositories/index.js";
+import { AppError, ForbiddenError, NotFoundError } from "../../utils/errors.js";
 import {
   candidateMatchPrompt,
   careerChatPrompt,
@@ -14,8 +14,8 @@ import {
   recommendationPrompt,
   resumePrompt,
   skillGapPrompt,
-} from "../../prompts";
-import { getAIProvider, safeAIComplete, type AIMessage } from "./provider";
+} from "../../prompts/index.js";
+import { getAIProvider, safeAIComplete, type AIMessage } from "./provider.js";
 
 function parseJson<T>(text: string): T {
   const cleaned = text.replace(/```json|```/g, "").trim();

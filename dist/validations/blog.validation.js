@@ -1,26 +1,23 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogSlugParamSchema = exports.blogIdParamSchema = exports.blogQuerySchema = exports.updateBlogSchema = exports.createBlogSchema = void 0;
-const zod_1 = require("zod");
-const common_validation_1 = require("./common.validation");
-exports.createBlogSchema = zod_1.z.object({
-    title: zod_1.z.string().min(5).max(200),
-    description: zod_1.z.string().min(20).max(500),
-    content: zod_1.z.string().min(50),
-    image: zod_1.z.string().url().optional(),
-    author: zod_1.z.string().min(2),
-    tags: zod_1.z.array(zod_1.z.string()).default([]),
-    published: zod_1.z.boolean().default(true),
+import { z } from "zod";
+import { objectIdSchema, paginationSchema } from "./common.validation.js";
+export const createBlogSchema = z.object({
+    title: z.string().min(5).max(200),
+    description: z.string().min(20).max(500),
+    content: z.string().min(50),
+    image: z.string().url().optional(),
+    author: z.string().min(2),
+    tags: z.array(z.string()).default([]),
+    published: z.boolean().default(true),
 });
-exports.updateBlogSchema = exports.createBlogSchema.partial();
-exports.blogQuerySchema = common_validation_1.paginationSchema.extend({
-    tag: zod_1.z.string().optional(),
-    published: zod_1.z.coerce.boolean().optional(),
+export const updateBlogSchema = createBlogSchema.partial();
+export const blogQuerySchema = paginationSchema.extend({
+    tag: z.string().optional(),
+    published: z.coerce.boolean().optional(),
 });
-exports.blogIdParamSchema = zod_1.z.object({
-    id: common_validation_1.objectIdSchema,
+export const blogIdParamSchema = z.object({
+    id: objectIdSchema,
 });
-exports.blogSlugParamSchema = zod_1.z.object({
-    slug: zod_1.z.string().min(1),
+export const blogSlugParamSchema = z.object({
+    slug: z.string().min(1),
 });
 //# sourceMappingURL=blog.validation.js.map

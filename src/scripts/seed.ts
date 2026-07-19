@@ -1,14 +1,14 @@
 import bcrypt from "bcrypt";
-import { connectDatabase, disconnectDatabase, getCollection } from "../config/database";
-import { COLLECTIONS } from "../constants";
+import { connectDatabase, disconnectDatabase, getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
 import type {
   BlogDocument,
   CompanyDocument,
   JobDocument,
   UserDocument,
-} from "../interfaces/models";
-import { uniqueSlug } from "../utils/helpers";
-import { logger } from "../utils/logger";
+} from "../interfaces/models.js";
+import { uniqueSlug } from "../utils/helpers.js";
+import { logger } from "../utils/logger.js";
 
 async function seed() {
   await connectDatabase();

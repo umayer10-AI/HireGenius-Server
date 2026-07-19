@@ -1,17 +1,17 @@
-import { applicationRepository } from "../repositories/application.repository";
-import { companyRepository } from "../repositories/company.repository";
-import { jobRepository } from "../repositories/job.repository";
-import { userRepository } from "../repositories/user.repository";
-import type { ApplicationDocument, UserDocument } from "../interfaces/models";
-import type { ApplicationStatus } from "../types";
-import { ConflictError, ForbiddenError } from "../utils/errors";
-import { buildPaginationMeta } from "../utils/response";
-import { createNotification } from "./notification.service";
+import { applicationRepository } from "../repositories/application.repository.js";
+import { companyRepository } from "../repositories/company.repository.js";
+import { jobRepository } from "../repositories/job.repository.js";
+import { userRepository } from "../repositories/user.repository.js";
+import type { ApplicationDocument, UserDocument } from "../interfaces/models.js";
+import type { ApplicationStatus } from "../types/index.js";
+import { ConflictError, ForbiddenError } from "../utils/errors.js";
+import { buildPaginationMeta } from "../utils/response.js";
+import { createNotification } from "./notification.service.js";
 import {
   sendApplicationStatusEmail,
   sendApplicationSubmittedEmail,
-} from "./email.service";
-import { uploadBufferToCloudinary } from "./upload.service";
+} from "./email.service.js";
+import { uploadBufferToCloudinary } from "./upload.service.js";
 
 export class ApplicationService {
   async apply(

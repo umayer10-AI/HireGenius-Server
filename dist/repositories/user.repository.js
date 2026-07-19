@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.userRepository = exports.UserRepository = void 0;
-const base_repository_1 = require("./base.repository");
-const constants_1 = require("../constants");
-class UserRepository extends base_repository_1.BaseRepository {
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
+export class UserRepository extends BaseRepository {
     constructor() {
-        super(constants_1.COLLECTIONS.USERS);
+        super(COLLECTIONS.USERS);
     }
     async findByEmail(email) {
         return this.findOne({ email: email.toLowerCase() });
@@ -76,6 +73,5 @@ class UserRepository extends base_repository_1.BaseRepository {
         });
     }
 }
-exports.UserRepository = UserRepository;
-exports.userRepository = new UserRepository();
+export const userRepository = new UserRepository();
 //# sourceMappingURL=user.repository.js.map

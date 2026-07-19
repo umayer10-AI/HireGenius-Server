@@ -1,4 +1,4 @@
-import type { BlogDocument, ReviewDocument, UserDocument } from "../interfaces/models";
+import type { BlogDocument, ReviewDocument, UserDocument } from "../interfaces/models.js";
 export declare class ReviewService {
     create(input: {
         companyId: string;
@@ -11,7 +11,7 @@ export declare class ReviewService {
         companyId?: string;
     }): Promise<{
         data: ReviewDocument[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     update(id: string, updates: Partial<Pick<ReviewDocument, "rating" | "comment">>, user: UserDocument): Promise<ReviewDocument>;
     remove(id: string, user: UserDocument): Promise<{
@@ -29,7 +29,7 @@ export declare class BlogService {
         sort?: string;
     }): Promise<{
         data: BlogDocument[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     getBySlug(slug: string): Promise<BlogDocument>;
     getById(id: string): Promise<BlogDocument>;

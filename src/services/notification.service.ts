@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { notificationRepository } from "../repositories";
-import type { NotificationType } from "../types";
-import { ForbiddenError } from "../utils/errors";
+import { notificationRepository } from "../repositories/index.js";
+import type { NotificationType } from "../types/index.js";
+import { ForbiddenError } from "../utils/errors.js";
 
 export async function createNotification(input: {
   receiverId: ObjectId | string;

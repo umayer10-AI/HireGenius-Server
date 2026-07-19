@@ -1,12 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadBufferToCloudinary = uploadBufferToCloudinary;
-exports.deleteCloudinaryAsset = deleteCloudinaryAsset;
-const cloudinary_1 = require("../config/cloudinary");
-const errors_1 = require("../utils/errors");
-async function uploadBufferToCloudinary(buffer, folder, resourceType = "auto") {
+import { cloudinary } from "../config/cloudinary.js";
+import { AppError } from "../utils/errors.js";
+export async function uploadBufferToCloudinary(buffer, folder, resourceType = "auto") {
     return new Promise((resolve, reject) => {
-        const stream = cloudinary_1.cloudinary.uploader.upload_stream({
+        const stream = cloudinary.uploader.upload_stream({
             folder: `hiregenius/${folder}`,
             resource_type: resourceType,
             transformation: resourceType === "image"
@@ -14,7 +10,7 @@ async function uploadBufferToCloudinary(buffer, folder, resourceType = "auto") {
                 : undefined,
         }, (error, result) => {
             if (error || !result) {
-                reject(new errors_1.AppError(error?.message || "Cloudinary upload failed", 500));
+                reject(new AppError(error?.message || "Cloudinary upload failed", 500));
                 return;
             }
             resolve(result);
@@ -22,7 +18,7 @@ async function uploadBufferToCloudinary(buffer, folder, resourceType = "auto") {
         stream.end(buffer);
     });
 }
-async function deleteCloudinaryAsset(publicIdOrUrl) {
+export async function deleteCloudinaryAsset(publicIdOrUrl) {
     if (!publicIdOrUrl)
         return;
     let publicId = publicIdOrUrl;
@@ -38,11 +34,11 @@ async function deleteCloudinaryAsset(publicIdOrUrl) {
         }
     }
     try {
-        await cloudinary_1.cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
     }
     catch {
         try {
-            await cloudinary_1.cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+            await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
         }
         catch {
             // ignore deletion failures for missing assets

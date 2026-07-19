@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import type { UserDocument } from "../interfaces/models";
+import type { UserDocument } from "../interfaces/models.js";
 declare global {
     namespace Express {
         interface Request {

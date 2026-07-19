@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import type { ApplicationDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import type { ApplicationDocument } from "../interfaces/models.js";
 export declare class ApplicationRepository extends BaseRepository<ApplicationDocument> {
     constructor();
     list(params: {

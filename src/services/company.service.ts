@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb";
-import { companyRepository } from "../repositories/company.repository";
-import { jobRepository } from "../repositories/job.repository";
-import type { CompanyDocument, UserDocument } from "../interfaces/models";
-import { ForbiddenError } from "../utils/errors";
-import { buildPaginationMeta } from "../utils/response";
-import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service";
+import { companyRepository } from "../repositories/company.repository.js";
+import { jobRepository } from "../repositories/job.repository.js";
+import type { CompanyDocument, UserDocument } from "../interfaces/models.js";
+import { ForbiddenError } from "../utils/errors.js";
+import { buildPaginationMeta } from "../utils/response.js";
+import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service.js";
 
 export class CompanyService {
   async create(

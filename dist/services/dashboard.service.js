@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.dashboardService = exports.DashboardService = void 0;
-const database_1 = require("../config/database");
-const constants_1 = require("../constants");
-class DashboardService {
+import { getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
+export class DashboardService {
     async getCandidateDashboard(user) {
-        const applications = (0, database_1.getCollection)(constants_1.COLLECTIONS.APPLICATIONS);
-        const jobs = (0, database_1.getCollection)(constants_1.COLLECTIONS.JOBS);
+        const applications = getCollection(COLLECTIONS.APPLICATIONS);
+        const jobs = getCollection(COLLECTIONS.JOBS);
         const [appliedCount, interviewCount, recentApplications, recommended] = await Promise.all([
             applications.countDocuments({ candidateId: user._id }),
             applications.countDocuments({
@@ -63,9 +60,9 @@ class DashboardService {
         };
     }
     async getRecruiterDashboard(user) {
-        const jobs = (0, database_1.getCollection)(constants_1.COLLECTIONS.JOBS);
-        const applications = (0, database_1.getCollection)(constants_1.COLLECTIONS.APPLICATIONS);
-        const companies = (0, database_1.getCollection)(constants_1.COLLECTIONS.COMPANIES);
+        const jobs = getCollection(COLLECTIONS.JOBS);
+        const applications = getCollection(COLLECTIONS.APPLICATIONS);
+        const companies = getCollection(COLLECTIONS.COMPANIES);
         const myJobs = await jobs.find({ createdBy: user._id }).toArray();
         const jobIds = myJobs.map((j) => j._id).filter(Boolean);
         const [activeJobs, expiredJobs, applicationCount, companyCount, recentApplicants] = await Promise.all([
@@ -115,10 +112,10 @@ class DashboardService {
         };
     }
     async getAdminDashboard() {
-        const users = (0, database_1.getCollection)(constants_1.COLLECTIONS.USERS);
-        const jobs = (0, database_1.getCollection)(constants_1.COLLECTIONS.JOBS);
-        const companies = (0, database_1.getCollection)(constants_1.COLLECTIONS.COMPANIES);
-        const applications = (0, database_1.getCollection)(constants_1.COLLECTIONS.APPLICATIONS);
+        const users = getCollection(COLLECTIONS.USERS);
+        const jobs = getCollection(COLLECTIONS.JOBS);
+        const companies = getCollection(COLLECTIONS.COMPANIES);
+        const applications = getCollection(COLLECTIONS.APPLICATIONS);
         const [totalUsers, recruiters, candidates, totalCompanies, totalJobs, totalApplications, growth,] = await Promise.all([
             users.countDocuments(),
             users.countDocuments({ role: "recruiter" }),
@@ -159,10 +156,10 @@ class DashboardService {
         };
     }
     async getPlatformStats() {
-        const users = (0, database_1.getCollection)(constants_1.COLLECTIONS.USERS);
-        const jobs = (0, database_1.getCollection)(constants_1.COLLECTIONS.JOBS);
-        const companies = (0, database_1.getCollection)(constants_1.COLLECTIONS.COMPANIES);
-        const applications = (0, database_1.getCollection)(constants_1.COLLECTIONS.APPLICATIONS);
+        const users = getCollection(COLLECTIONS.USERS);
+        const jobs = getCollection(COLLECTIONS.JOBS);
+        const companies = getCollection(COLLECTIONS.COMPANIES);
+        const applications = getCollection(COLLECTIONS.APPLICATIONS);
         const [jobCount, companyCount, candidateCount, recruiterCount, applicationCount] = await Promise.all([
             jobs.countDocuments({ status: "active" }),
             companies.countDocuments(),
@@ -179,6 +176,5 @@ class DashboardService {
         };
     }
 }
-exports.DashboardService = DashboardService;
-exports.dashboardService = new DashboardService();
+export const dashboardService = new DashboardService();
 //# sourceMappingURL=dashboard.service.js.map

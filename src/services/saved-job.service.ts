@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
-import { companyRepository } from "../repositories/company.repository";
-import { jobRepository } from "../repositories/job.repository";
-import { savedJobRepository } from "../repositories";
-import { userRepository } from "../repositories/user.repository";
-import type { UserDocument } from "../interfaces/models";
-import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors";
-import { buildPaginationMeta } from "../utils/response";
-import { createNotification } from "./notification.service";
+import { companyRepository } from "../repositories/company.repository.js";
+import { jobRepository } from "../repositories/job.repository.js";
+import { savedJobRepository } from "../repositories/index.js";
+import { userRepository } from "../repositories/user.repository.js";
+import type { UserDocument } from "../interfaces/models.js";
+import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors.js";
+import { buildPaginationMeta } from "../utils/response.js";
+import { createNotification } from "./notification.service.js";
 
 export class SavedJobService {
   async save(jobId: string, user: UserDocument) {

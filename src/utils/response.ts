@@ -1,5 +1,5 @@
 import { Response } from "express";
-import type { ApiErrorResponse, ApiSuccessResponse, PaginationMeta } from "../types";
+import type { ApiErrorResponse, ApiSuccessResponse, PaginationMeta } from "../types/index.js";
 
 export function sendSuccess<T>(
   res: Response,

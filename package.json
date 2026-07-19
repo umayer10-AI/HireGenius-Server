@@ -1,6 +1,7 @@
 {
   "name": "hiregenius-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "HireGenius AI — Production Job Portal API",
   "main": "dist/server.js",
   "scripts": {

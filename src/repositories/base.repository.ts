@@ -6,8 +6,8 @@ import {
   type UpdateFilter,
   type WithId,
 } from "mongodb";
-import { getCollection } from "../config/database";
-import { NotFoundError } from "../utils/errors";
+import { getCollection } from "../config/database.js";
+import { NotFoundError } from "../utils/errors.js";
 
 export class BaseRepository<T extends Document> {
   constructor(protected readonly collectionName: string) {}

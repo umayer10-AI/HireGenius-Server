@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../middlewares/error.middleware";
-import { jobService } from "../services/job.service";
-import { sendSuccess } from "../utils/response";
+import { asyncHandler } from "../middlewares/error.middleware.js";
+import { jobService } from "../services/job.service.js";
+import { sendSuccess } from "../utils/response.js";
 
 export const createJob = asyncHandler(async (req: Request, res: Response) => {
   const data = await jobService.create(req.body, req.user!);

@@ -1,15 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginSchema = exports.registerSchema = void 0;
-const zod_1 = require("zod");
-exports.registerSchema = zod_1.z.object({
-    name: zod_1.z.string().min(2).max(100),
-    email: zod_1.z.string().email(),
-    password: zod_1.z.string().min(8).max(128),
-    role: zod_1.z.enum(["candidate", "recruiter"]).default("candidate"),
+import { z } from "zod";
+export const registerSchema = z.object({
+    name: z.string().min(2).max(100),
+    email: z.string().email(),
+    password: z.string().min(8).max(128),
+    role: z.enum(["candidate", "recruiter"]).default("candidate"),
 });
-exports.loginSchema = zod_1.z.object({
-    email: zod_1.z.string().email(),
-    password: zod_1.z.string().min(1),
+export const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(1),
 });
 //# sourceMappingURL=auth.validation.js.map

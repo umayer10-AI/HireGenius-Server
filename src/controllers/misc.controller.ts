@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../middlewares/error.middleware";
-import { applicationService } from "../services/application.service";
-import { savedJobService } from "../services/saved-job.service";
-import { blogService, reviewService } from "../services/review.service";
-import { dashboardService } from "../services/dashboard.service";
-import { contactService } from "../services/contact.service";
-import * as notificationService from "../services/notification.service";
-import { aiService } from "../services/ai/ai.service";
-import { sendSuccess } from "../utils/response";
-import { ForbiddenError } from "../utils/errors";
-import { buildPaginationMeta } from "../utils/response";
+import { asyncHandler } from "../middlewares/error.middleware.js";
+import { applicationService } from "../services/application.service.js";
+import { savedJobService } from "../services/saved-job.service.js";
+import { blogService, reviewService } from "../services/review.service.js";
+import { dashboardService } from "../services/dashboard.service.js";
+import { contactService } from "../services/contact.service.js";
+import * as notificationService from "../services/notification.service.js";
+import { aiService } from "../services/ai/ai.service.js";
+import { sendSuccess } from "../utils/response.js";
+import { ForbiddenError } from "../utils/errors.js";
+import { buildPaginationMeta } from "../utils/response.js";
 
 export const createApplication = asyncHandler(async (req: Request, res: Response) => {
   const data = await applicationService.apply(req.body, req.user!, req.file);
@@ -236,8 +236,8 @@ export const syncAuthProfile = asyncHandler(async (req: Request, res: Response) 
 });
 
 async function userServiceGetMe(req: Request) {
-  const { userService } = await import("../services/user.service");
-  const { calculateProfileCompletion } = await import("../utils/helpers");
+  const { userService } = await import("../services/user.service.js");
+  const { calculateProfileCompletion } = await import("../utils/helpers.js");
   return {
     ...(await userService.getMe(req.user!)),
     profileCompletion: calculateProfileCompletion(req.user!),

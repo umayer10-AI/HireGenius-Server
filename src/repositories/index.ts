@@ -1,6 +1,6 @@
 import { ObjectId, type Filter } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import { COLLECTIONS } from "../constants";
+import { BaseRepository } from "./base.repository.js";
+import { COLLECTIONS } from "../constants/index.js";
 import type {
   AIChatDocument,
   BlogDocument,
@@ -8,7 +8,7 @@ import type {
   ResumeGenerationDocument,
   ReviewDocument,
   SavedJobDocument,
-} from "../interfaces/models";
+} from "../interfaces/models.js";
 
 export class SavedJobRepository extends BaseRepository<SavedJobDocument> {
   constructor() {

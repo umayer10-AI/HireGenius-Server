@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
-import { env } from "../config/env";
-import { logger } from "../utils/logger";
+import { env } from "../config/env.js";
+import { logger } from "../utils/logger.js";
 
 const hasSmtp = Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
 

@@ -1,4 +1,4 @@
-import type { ApplicationDocument, JobDocument, UserDocument } from "../interfaces/models";
+import type { ApplicationDocument, JobDocument, UserDocument } from "../interfaces/models.js";
 export declare class DashboardService {
     getCandidateDashboard(user: UserDocument): Promise<{
         stats: {

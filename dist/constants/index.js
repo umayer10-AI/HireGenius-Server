@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.COMPANY_SIZES = exports.EXPERIENCE_LEVELS = exports.JOB_CATEGORIES = exports.COLLECTIONS = void 0;
-exports.COLLECTIONS = {
+export const COLLECTIONS = {
     USERS: "users",
     COMPANIES: "companies",
     JOBS: "jobs",
@@ -15,7 +12,7 @@ exports.COLLECTIONS = {
     CONTACT_MESSAGES: "contactMessages",
     NEWSLETTER: "newsletterSubscribers",
 };
-exports.JOB_CATEGORIES = [
+export const JOB_CATEGORIES = [
     "Software Engineering",
     "Product Management",
     "Design",
@@ -32,7 +29,7 @@ exports.JOB_CATEGORIES = [
     "Content Writing",
     "Other",
 ];
-exports.EXPERIENCE_LEVELS = [
+export const EXPERIENCE_LEVELS = [
     "Intern",
     "Entry Level",
     "Junior",
@@ -41,7 +38,7 @@ exports.EXPERIENCE_LEVELS = [
     "Lead",
     "Executive",
 ];
-exports.COMPANY_SIZES = [
+export const COMPANY_SIZES = [
     "1-10",
     "11-50",
     "51-200",

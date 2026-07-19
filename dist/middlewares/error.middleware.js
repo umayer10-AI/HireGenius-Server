@@ -1,32 +1,26 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorHandler = errorHandler;
-exports.notFoundHandler = notFoundHandler;
-exports.asyncHandler = asyncHandler;
-exports.validate = validate;
-const zod_1 = require("zod");
-const errors_1 = require("../utils/errors");
-const response_1 = require("../utils/response");
-const logger_1 = require("../utils/logger");
-function errorHandler(err, _req, res, _next) {
-    if (err instanceof errors_1.AppError) {
-        return (0, response_1.sendError)(res, err.message, err.statusCode, err.details);
+import { ZodError } from "zod";
+import { AppError } from "../utils/errors.js";
+import { sendError } from "../utils/response.js";
+import { logger } from "../utils/logger.js";
+export function errorHandler(err, _req, res, _next) {
+    if (err instanceof AppError) {
+        return sendError(res, err.message, err.statusCode, err.details);
     }
-    if (err instanceof zod_1.ZodError) {
-        return (0, response_1.sendError)(res, "Validation failed", 422, err.flatten());
+    if (err instanceof ZodError) {
+        return sendError(res, "Validation failed", 422, err.flatten());
     }
-    logger_1.logger.error("Unhandled error", err);
-    return (0, response_1.sendError)(res, "Internal server error", 500);
+    logger.error("Unhandled error", err);
+    return sendError(res, "Internal server error", 500);
 }
-function notFoundHandler(req, res) {
-    return (0, response_1.sendError)(res, `Route not found: ${req.method} ${req.originalUrl}`, 404);
+export function notFoundHandler(req, res) {
+    return sendError(res, `Route not found: ${req.method} ${req.originalUrl}`, 404);
 }
-function asyncHandler(fn) {
+export function asyncHandler(fn) {
     return (req, res, next) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 }
-function validate(schema, source = "body") {
+export function validate(schema, source = "body") {
     return (req, _res, next) => {
         try {
             const parsed = schema.parse(req[source]);

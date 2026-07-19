@@ -1,39 +1,36 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.userService = exports.UserService = void 0;
-const user_repository_1 = require("../repositories/user.repository");
-const errors_1 = require("../utils/errors");
-const helpers_1 = require("../utils/helpers");
-const upload_service_1 = require("./upload.service");
-const response_1 = require("../utils/response");
-class UserService {
+import { userRepository } from "../repositories/user.repository.js";
+import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors.js";
+import { calculateProfileCompletion, omitPassword } from "../utils/helpers.js";
+import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service.js";
+import { buildPaginationMeta } from "../utils/response.js";
+export class UserService {
     async getMe(user) {
-        const completion = (0, helpers_1.calculateProfileCompletion)(user);
+        const completion = calculateProfileCompletion(user);
         return {
-            ...(0, helpers_1.omitPassword)(user),
+            ...omitPassword(user),
             profileCompletion: completion,
         };
     }
     async getById(id, requester) {
-        const user = await user_repository_1.userRepository.findByIdOrThrow(id, "User not found");
+        const user = await userRepository.findByIdOrThrow(id, "User not found");
         if (requester &&
             requester.role !== "admin" &&
             requester._id?.toString() !== id &&
             user.privacy?.publicProfile === false) {
-            throw new errors_1.ForbiddenError("This profile is private");
+            throw new ForbiddenError("This profile is private");
         }
-        return (0, helpers_1.omitPassword)(user);
+        return omitPassword(user);
     }
     async list(params) {
-        const { data, total } = await user_repository_1.userRepository.listUsers(params);
+        const { data, total } = await userRepository.listUsers(params);
         return {
-            data: data.map(helpers_1.omitPassword),
-            meta: (0, response_1.buildPaginationMeta)(params.page, params.limit, total),
+            data: data.map(omitPassword),
+            meta: buildPaginationMeta(params.page, params.limit, total),
         };
     }
     async update(id, updates, requester) {
         if (requester.role !== "admin" && requester._id?.toString() !== id) {
-            throw new errors_1.ForbiddenError("You can only update your own profile");
+            throw new ForbiddenError("You can only update your own profile");
         }
         if (updates.role) {
             const isSelf = requester._id?.toString() === id;
@@ -55,85 +52,84 @@ class UserService {
             delete updates.isVerified;
         }
         if (updates.email) {
-            const existing = await user_repository_1.userRepository.findByEmail(updates.email);
+            const existing = await userRepository.findByEmail(updates.email);
             if (existing && existing._id?.toString() !== id) {
-                throw new errors_1.ConflictError("Email already in use");
+                throw new ConflictError("Email already in use");
             }
             updates.email = updates.email.toLowerCase();
         }
-        const updated = await user_repository_1.userRepository.updateById(id, {
+        const updated = await userRepository.updateById(id, {
             $set: { ...updates, updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async setMyRole(user, role) {
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
+            throw new ForbiddenError("Invalid user");
         if (user.role === "admin") {
-            throw new errors_1.ForbiddenError("Admin role cannot be changed here");
+            throw new ForbiddenError("Admin role cannot be changed here");
         }
-        const updated = await user_repository_1.userRepository.updateById(user._id.toString(), {
+        const updated = await userRepository.updateById(user._id.toString(), {
             $set: { role, updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async remove(id, requester) {
         if (requester.role !== "admin" && requester._id?.toString() !== id) {
-            throw new errors_1.ForbiddenError("You can only delete your own account");
+            throw new ForbiddenError("You can only delete your own account");
         }
-        await user_repository_1.userRepository.deleteById(id, "User not found");
+        await userRepository.deleteById(id, "User not found");
         return { deleted: true };
     }
     async uploadAvatar(userId, file) {
-        const user = await user_repository_1.userRepository.findByIdOrThrow(userId, "User not found");
-        const uploaded = await (0, upload_service_1.uploadBufferToCloudinary)(file.buffer, "avatars", "image");
+        const user = await userRepository.findByIdOrThrow(userId, "User not found");
+        const uploaded = await uploadBufferToCloudinary(file.buffer, "avatars", "image");
         if (user.image) {
-            await (0, upload_service_1.deleteCloudinaryAsset)(user.image);
+            await deleteCloudinaryAsset(user.image);
         }
-        const updated = await user_repository_1.userRepository.updateById(userId, {
+        const updated = await userRepository.updateById(userId, {
             $set: { image: uploaded.secure_url, updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async uploadResume(userId, file) {
-        const user = await user_repository_1.userRepository.findByIdOrThrow(userId, "User not found");
-        const uploaded = await (0, upload_service_1.uploadBufferToCloudinary)(file.buffer, "resumes", "raw");
+        const user = await userRepository.findByIdOrThrow(userId, "User not found");
+        const uploaded = await uploadBufferToCloudinary(file.buffer, "resumes", "raw");
         if (user.resume) {
-            await (0, upload_service_1.deleteCloudinaryAsset)(user.resume);
+            await deleteCloudinaryAsset(user.resume);
         }
-        const updated = await user_repository_1.userRepository.updateById(userId, {
+        const updated = await userRepository.updateById(userId, {
             $set: { resume: uploaded.secure_url, updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async deleteResume(userId) {
-        const user = await user_repository_1.userRepository.findByIdOrThrow(userId, "User not found");
+        const user = await userRepository.findByIdOrThrow(userId, "User not found");
         if (!user.resume)
-            throw new errors_1.NotFoundError("No resume found");
-        await (0, upload_service_1.deleteCloudinaryAsset)(user.resume);
-        const updated = await user_repository_1.userRepository.updateById(userId, {
+            throw new NotFoundError("No resume found");
+        await deleteCloudinaryAsset(user.resume);
+        const updated = await userRepository.updateById(userId, {
             $set: { resume: "", updatedAt: new Date() },
             $unset: { resume: "" },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async clearSearchHistory(userId) {
-        const updated = await user_repository_1.userRepository.updateById(userId, {
+        const updated = await userRepository.updateById(userId, {
             $set: { searchHistory: [], updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async clearRecentlyViewed(userId) {
-        const updated = await user_repository_1.userRepository.updateById(userId, {
+        const updated = await userRepository.updateById(userId, {
             $set: { recentlyViewedJobs: [], updatedAt: new Date() },
         });
-        return (0, helpers_1.omitPassword)(updated);
+        return omitPassword(updated);
     }
     async getRecentlyViewedJobs(userId) {
-        const user = await user_repository_1.userRepository.findByIdOrThrow(userId, "User not found");
+        const user = await userRepository.findByIdOrThrow(userId, "User not found");
         return user.recentlyViewedJobs || [];
     }
 }
-exports.UserService = UserService;
-exports.userService = new UserService();
+export const userService = new UserService();
 //# sourceMappingURL=user.service.js.map

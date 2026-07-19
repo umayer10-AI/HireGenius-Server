@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema, paginationSchema } from "./common.validation";
+import { objectIdSchema, paginationSchema } from "./common.validation.js";
 
 export const createCompanySchema = z.object({
   companyName: z.string().min(2).max(150),

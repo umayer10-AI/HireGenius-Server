@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb";
-import { userRepository } from "../repositories/user.repository";
-import type { UserDocument } from "../interfaces/models";
-import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors";
-import { calculateProfileCompletion, omitPassword } from "../utils/helpers";
-import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service";
-import { buildPaginationMeta } from "../utils/response";
+import { userRepository } from "../repositories/user.repository.js";
+import type { UserDocument } from "../interfaces/models.js";
+import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors.js";
+import { calculateProfileCompletion, omitPassword } from "../utils/helpers.js";
+import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service.js";
+import { buildPaginationMeta } from "../utils/response.js";
 
 export class UserService {
   async getMe(user: UserDocument) {

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import type { UserDocument } from "../interfaces/models";
+import type { UserDocument } from "../interfaces/models.js";
 export declare class UserService {
     getMe(user: UserDocument): Promise<{
         profileCompletion: {
@@ -7,7 +7,7 @@ export declare class UserService {
             missing: string[];
         };
         email: string;
-        role: import("../types").UserRole;
+        role: import("../types/index.js").UserRole;
         createdAt: Date;
         location?: string | undefined;
         skills: string[];
@@ -21,8 +21,8 @@ export declare class UserService {
         phone?: string | undefined;
         bio?: string | undefined;
         experienceYears?: number | undefined;
-        experience?: import("../types").ExperienceItem[] | undefined;
-        education: import("../types").EducationItem[];
+        experience?: import("../types/index.js").ExperienceItem[] | undefined;
+        education: import("../types/index.js").EducationItem[];
         resume?: string | undefined;
         portfolio?: string | undefined;
         appliedJobs: ObjectId[];
@@ -56,7 +56,7 @@ export declare class UserService {
         sort?: string;
     }): Promise<{
         data: Omit<UserDocument, "password">[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     update(id: string, updates: Partial<UserDocument>, requester: UserDocument): Promise<Omit<UserDocument, "password">>;
     setMyRole(user: UserDocument, role: "candidate" | "recruiter"): Promise<Omit<UserDocument, "password">>;

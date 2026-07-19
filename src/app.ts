@@ -4,11 +4,11 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { toNodeHandler } from "better-auth/node";
-import { env } from "./config/env";
-import { createAuth } from "./lib/auth";
-import apiRoutes from "./routes";
-import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
-import { logger } from "./utils/logger";
+import { env } from "./config/env.js";
+import { createAuth } from "./lib/auth.js";
+import apiRoutes from "./routes/index.js";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
+import { logger } from "./utils/logger.js";
 
 export function createApp() {
   const app = express();

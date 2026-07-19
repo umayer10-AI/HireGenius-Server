@@ -1,5 +1,5 @@
 import multer from "multer";
-import { AppError } from "../utils/errors";
+import { AppError } from "../utils/errors.js";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const ALLOWED_DOC_TYPES = [

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema, paginationSchema } from "./common.validation";
+import { objectIdSchema, paginationSchema } from "./common.validation.js";
 
 export const createBlogSchema = z.object({
   title: z.string().min(5).max(200),

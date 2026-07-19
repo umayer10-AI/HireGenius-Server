@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema, paginationSchema, salarySchema } from "./common.validation";
+import { objectIdSchema, paginationSchema, salarySchema } from "./common.validation.js";
 
 export const createJobSchema = z.object({
   companyId: objectIdSchema,

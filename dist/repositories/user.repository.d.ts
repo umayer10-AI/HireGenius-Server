@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import type { UserDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import type { UserDocument } from "../interfaces/models.js";
 export declare class UserRepository extends BaseRepository<UserDocument> {
     constructor();
     findByEmail(email: string): Promise<UserDocument | null>;

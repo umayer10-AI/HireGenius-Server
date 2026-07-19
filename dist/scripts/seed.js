@@ -1,26 +1,21 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const database_1 = require("../config/database");
-const constants_1 = require("../constants");
-const helpers_1 = require("../utils/helpers");
-const logger_1 = require("../utils/logger");
+import bcrypt from "bcrypt";
+import { connectDatabase, disconnectDatabase, getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
+import { uniqueSlug } from "../utils/helpers.js";
+import { logger } from "../utils/logger.js";
 async function seed() {
-    await (0, database_1.connectDatabase)();
-    const users = (0, database_1.getCollection)(constants_1.COLLECTIONS.USERS);
-    const companies = (0, database_1.getCollection)(constants_1.COLLECTIONS.COMPANIES);
-    const jobs = (0, database_1.getCollection)(constants_1.COLLECTIONS.JOBS);
-    const blogs = (0, database_1.getCollection)(constants_1.COLLECTIONS.BLOGS);
+    await connectDatabase();
+    const users = getCollection(COLLECTIONS.USERS);
+    const companies = getCollection(COLLECTIONS.COMPANIES);
+    const jobs = getCollection(COLLECTIONS.JOBS);
+    const blogs = getCollection(COLLECTIONS.BLOGS);
     await Promise.all([
         users.deleteMany({}),
         companies.deleteMany({}),
         jobs.deleteMany({}),
         blogs.deleteMany({}),
     ]);
-    const passwordHash = await bcrypt_1.default.hash("Password123!", 12);
+    const passwordHash = await bcrypt.hash("Password123!", 12);
     const now = new Date();
     const adminResult = await users.insertOne({
         name: "Ava Admin",
@@ -154,7 +149,7 @@ async function seed() {
             companyId: companyIds[0],
             createdBy: recruiterResult.insertedId,
             title: "Senior Full Stack Engineer",
-            slug: (0, helpers_1.uniqueSlug)("Senior Full Stack Engineer"),
+            slug: uniqueSlug("Senior Full Stack Engineer"),
             shortDescription: "Own end-to-end features across Next.js and Node.js services.",
             description: "Join Nimbus Cloud to build scalable hiring and analytics experiences used by thousands of teams.",
             requirements: ["5+ years experience", "TypeScript", "React", "Node.js", "MongoDB"],
@@ -184,7 +179,7 @@ async function seed() {
             companyId: companyIds[1],
             createdBy: recruiterResult.insertedId,
             title: "Product Designer",
-            slug: (0, helpers_1.uniqueSlug)("Product Designer"),
+            slug: uniqueSlug("Product Designer"),
             shortDescription: "Design elegant product flows for a premium design studio.",
             description: "Pixelcraft is hiring a product designer to lead interaction design for SaaS clients.",
             requirements: ["3+ years product design", "Figma", "Design systems"],
@@ -210,7 +205,7 @@ async function seed() {
             companyId: companyIds[2],
             createdBy: recruiterResult.insertedId,
             title: "Machine Learning Engineer",
-            slug: (0, helpers_1.uniqueSlug)("Machine Learning Engineer"),
+            slug: uniqueSlug("Machine Learning Engineer"),
             shortDescription: "Build retrieval and ranking systems for enterprise AI products.",
             description: "SignalAI needs an ML engineer to improve recommendation quality and evaluation loops.",
             requirements: ["Python", "PyTorch or TensorFlow", "LLM experience"],
@@ -236,7 +231,7 @@ async function seed() {
             companyId: companyIds[0],
             createdBy: recruiterResult.insertedId,
             title: "DevOps Engineer",
-            slug: (0, helpers_1.uniqueSlug)("DevOps Engineer"),
+            slug: uniqueSlug("DevOps Engineer"),
             shortDescription: "Own CI/CD, observability, and cloud infrastructure reliability.",
             description: "Help Nimbus scale secure deployment pipelines across multiple regions.",
             requirements: ["AWS", "Kubernetes", "Terraform", "Observability"],
@@ -263,7 +258,7 @@ async function seed() {
     await blogs.insertMany([
         {
             title: "How AI Is Changing Modern Hiring",
-            slug: (0, helpers_1.uniqueSlug)("How AI Is Changing Modern Hiring"),
+            slug: uniqueSlug("How AI Is Changing Modern Hiring"),
             description: "A practical look at AI resume scoring, matching, and recruiter workflows.",
             content: "Artificial intelligence is transforming recruiting from keyword filters into contextual matching. HireGenius AI combines profile signals, skills graphs, and conversational coaching so candidates and recruiters move faster with better decisions.",
             author: "Ava Admin",
@@ -275,7 +270,7 @@ async function seed() {
         },
         {
             title: "Building an ATS-Friendly Resume in 2026",
-            slug: (0, helpers_1.uniqueSlug)("Building an ATS-Friendly Resume in 2026"),
+            slug: uniqueSlug("Building an ATS-Friendly Resume in 2026"),
             description: "Structure, keywords, and proof points that still win interviews.",
             content: "ATS-friendly resumes emphasize clarity, quantified outcomes, and role-aligned skills. Use clean section headings, avoid complex tables, and mirror language from the job description without keyword stuffing.",
             author: "Casey Candidate",
@@ -286,7 +281,7 @@ async function seed() {
         },
         {
             title: "Remote Interview Playbook for Candidates",
-            slug: (0, helpers_1.uniqueSlug)("Remote Interview Playbook for Candidates"),
+            slug: uniqueSlug("Remote Interview Playbook for Candidates"),
             description: "Preparation rituals that calm nerves and highlight your strengths.",
             content: "Treat remote interviews like product demos: prepare your environment, rehearse stories with STAR, and keep a concise project narrative ready. Follow up with a short thank-you summarizing mutual fit.",
             author: "Ryan Recruiter",
@@ -296,14 +291,14 @@ async function seed() {
             updatedAt: now,
         },
     ]);
-    logger_1.logger.info("Seed completed");
-    logger_1.logger.info("Accounts: admin@hiregenius.ai / recruiter@hiregenius.ai / candidate@hiregenius.ai");
-    logger_1.logger.info("Password for all: Password123!");
-    await (0, database_1.disconnectDatabase)();
+    logger.info("Seed completed");
+    logger.info("Accounts: admin@hiregenius.ai / recruiter@hiregenius.ai / candidate@hiregenius.ai");
+    logger.info("Password for all: Password123!");
+    await disconnectDatabase();
 }
 seed().catch(async (error) => {
-    logger_1.logger.error("Seed failed", error);
-    await (0, database_1.disconnectDatabase)();
+    logger.error("Seed failed", error);
+    await disconnectDatabase();
     process.exit(1);
 });
 //# sourceMappingURL=seed.js.map

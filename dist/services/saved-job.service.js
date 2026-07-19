@@ -1,31 +1,28 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.savedJobService = exports.SavedJobService = void 0;
-const mongodb_1 = require("mongodb");
-const company_repository_1 = require("../repositories/company.repository");
-const job_repository_1 = require("../repositories/job.repository");
-const repositories_1 = require("../repositories");
-const user_repository_1 = require("../repositories/user.repository");
-const errors_1 = require("../utils/errors");
-const response_1 = require("../utils/response");
-const notification_service_1 = require("./notification.service");
-class SavedJobService {
+import { ObjectId } from "mongodb";
+import { companyRepository } from "../repositories/company.repository.js";
+import { jobRepository } from "../repositories/job.repository.js";
+import { savedJobRepository } from "../repositories/index.js";
+import { userRepository } from "../repositories/user.repository.js";
+import { ConflictError, ForbiddenError, NotFoundError } from "../utils/errors.js";
+import { buildPaginationMeta } from "../utils/response.js";
+import { createNotification } from "./notification.service.js";
+export class SavedJobService {
     async save(jobId, user) {
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
-        const job = await job_repository_1.jobRepository.findByIdOrThrow(jobId, "Job not found");
-        const existing = await repositories_1.savedJobRepository.findExisting(user._id, job._id);
+            throw new ForbiddenError("Invalid user");
+        const job = await jobRepository.findByIdOrThrow(jobId, "Job not found");
+        const existing = await savedJobRepository.findExisting(user._id, job._id);
         if (existing)
-            throw new errors_1.ConflictError("Job already saved");
+            throw new ConflictError("Job already saved");
         const now = new Date();
-        const saved = await repositories_1.savedJobRepository.insertOne({
+        const saved = await savedJobRepository.insertOne({
             userId: user._id,
             jobId: job._id,
             createdAt: now,
             updatedAt: now,
         });
-        await user_repository_1.userRepository.pushSavedJob(user._id, job._id);
-        await (0, notification_service_1.createNotification)({
+        await userRepository.pushSavedJob(user._id, job._id);
+        await createNotification({
             receiverId: user._id,
             title: "Job saved",
             message: `${job.title} was added to your saved jobs`,
@@ -36,11 +33,11 @@ class SavedJobService {
     }
     async list(user, page, limit) {
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
-        const { data, total } = await repositories_1.savedJobRepository.listByUser(user._id, page, limit);
+            throw new ForbiddenError("Invalid user");
+        const { data, total } = await savedJobRepository.listByUser(user._id, page, limit);
         const enriched = await Promise.all(data.map(async (item) => {
-            const job = await job_repository_1.jobRepository.findById(item.jobId);
-            const company = job ? await company_repository_1.companyRepository.findById(job.companyId) : null;
+            const job = await jobRepository.findById(item.jobId);
+            const company = job ? await companyRepository.findById(job.companyId) : null;
             return {
                 ...item,
                 job: job
@@ -59,36 +56,35 @@ class SavedJobService {
         }));
         return {
             data: enriched,
-            meta: (0, response_1.buildPaginationMeta)(page, limit, total),
+            meta: buildPaginationMeta(page, limit, total),
         };
     }
     async remove(idOrJobId, user) {
         if (!user._id)
-            throw new errors_1.ForbiddenError("Invalid user");
+            throw new ForbiddenError("Invalid user");
         let jobId = null;
-        const byId = await repositories_1.savedJobRepository.findById(idOrJobId);
+        const byId = await savedJobRepository.findById(idOrJobId);
         if (byId) {
             if (byId.userId.toString() !== user._id.toString()) {
-                throw new errors_1.ForbiddenError("Forbidden");
+                throw new ForbiddenError("Forbidden");
             }
             jobId = byId.jobId;
-            await repositories_1.savedJobRepository.deleteById(idOrJobId);
+            await savedJobRepository.deleteById(idOrJobId);
         }
-        else if (mongodb_1.ObjectId.isValid(idOrJobId)) {
-            const deleted = await repositories_1.savedJobRepository.deleteByUserAndJob(user._id, new mongodb_1.ObjectId(idOrJobId));
+        else if (ObjectId.isValid(idOrJobId)) {
+            const deleted = await savedJobRepository.deleteByUserAndJob(user._id, new ObjectId(idOrJobId));
             if (!deleted)
-                throw new errors_1.NotFoundError("Saved job not found");
-            jobId = new mongodb_1.ObjectId(idOrJobId);
+                throw new NotFoundError("Saved job not found");
+            jobId = new ObjectId(idOrJobId);
         }
         else {
-            throw new errors_1.NotFoundError("Saved job not found");
+            throw new NotFoundError("Saved job not found");
         }
         if (jobId) {
-            await user_repository_1.userRepository.pullSavedJob(user._id, jobId);
+            await userRepository.pullSavedJob(user._id, jobId);
         }
         return { deleted: true };
     }
 }
-exports.SavedJobService = SavedJobService;
-exports.savedJobService = new SavedJobService();
+export const savedJobService = new SavedJobService();
 //# sourceMappingURL=saved-job.service.js.map

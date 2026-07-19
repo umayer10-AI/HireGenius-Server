@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema } from "./common.validation";
+import { objectIdSchema } from "./common.validation.js";
 
 export const resumeGenerateSchema = z.object({
   name: z.string().min(2),

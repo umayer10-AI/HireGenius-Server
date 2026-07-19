@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import type { UserDocument } from "../interfaces/models";
+import type { UserDocument } from "../interfaces/models.js";
 export declare class SavedJobService {
-    save(jobId: string, user: UserDocument): Promise<import("../interfaces/models").SavedJobDocument>;
+    save(jobId: string, user: UserDocument): Promise<import("../interfaces/models.js").SavedJobDocument>;
     list(user: UserDocument, page: number, limit: number): Promise<{
         data: {
             job: {
@@ -21,17 +21,17 @@ export declare class SavedJobService {
                 responsibilities: string[];
                 benefits: string[];
                 skills: string[];
-                salary: import("../types").SalaryRange;
+                salary: import("../types/index.js").SalaryRange;
                 currency: string;
                 experience: string;
                 category: string;
-                jobType: import("../types").JobType;
-                workMode: import("../types").WorkMode;
+                jobType: import("../types/index.js").JobType;
+                workMode: import("../types/index.js").WorkMode;
                 location: string;
                 vacancies: number;
                 applicationDeadline: Date;
                 featured: boolean;
-                status: import("../types").JobStatus;
+                status: import("../types/index.js").JobStatus;
                 bannerImage?: string;
                 views: number;
                 createdAt: Date;
@@ -43,7 +43,7 @@ export declare class SavedJobService {
             createdAt: Date;
             updatedAt: Date;
         }[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     remove(idOrJobId: string, user: UserDocument): Promise<{
         deleted: boolean;

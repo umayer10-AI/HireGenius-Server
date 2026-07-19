@@ -1,45 +1,38 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDatabase = connectDatabase;
-exports.getDb = getDb;
-exports.getClient = getClient;
-exports.getCollection = getCollection;
-exports.disconnectDatabase = disconnectDatabase;
-const mongodb_1 = require("mongodb");
-const env_1 = require("./env");
+import { MongoClient } from "mongodb";
+import { env } from "./env.js";
 let client = null;
 let db = null;
-async function connectDatabase() {
+export async function connectDatabase() {
     if (db) {
         return db;
     }
-    client = new mongodb_1.MongoClient(env_1.env.MONGODB_URI, {
+    client = new MongoClient(env.MONGODB_URI, {
         maxPoolSize: 20,
         minPoolSize: 2,
         serverSelectionTimeoutMS: 10000,
     });
     await client.connect();
-    db = client.db(env_1.env.MONGODB_DB_NAME);
+    db = client.db(env.MONGODB_DB_NAME);
     await ensureIndexes(db);
-    console.log(`MongoDB connected: ${env_1.env.MONGODB_DB_NAME}`);
+    console.log(`MongoDB connected: ${env.MONGODB_DB_NAME}`);
     return db;
 }
-function getDb() {
+export function getDb() {
     if (!db) {
         throw new Error("Database not initialized. Call connectDatabase() first.");
     }
     return db;
 }
-function getClient() {
+export function getClient() {
     if (!client) {
         throw new Error("MongoDB client not initialized.");
     }
     return client;
 }
-function getCollection(name) {
+export function getCollection(name) {
     return getDb().collection(name);
 }
-async function disconnectDatabase() {
+export async function disconnectDatabase() {
     if (client) {
         await client.close();
         client = null;

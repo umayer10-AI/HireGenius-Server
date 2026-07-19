@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import type { ApplicationStatus, EducationItem, ExperienceItem, JobStatus, JobType, NotificationType, SalaryRange, SocialLinks, UserRole, WorkMode } from "../types";
+import type { ApplicationStatus, EducationItem, ExperienceItem, JobStatus, JobType, NotificationType, SalaryRange, SocialLinks, UserRole, WorkMode } from "../types/index.js";
 export interface UserDocument {
     _id?: ObjectId;
     name: string;

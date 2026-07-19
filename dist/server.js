@@ -1,19 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = require("./app");
-const database_1 = require("./config/database");
-const env_1 = require("./config/env");
-const logger_1 = require("./utils/logger");
+import { createApp } from "./app.js";
+import { connectDatabase } from "./config/database.js";
+import { env } from "./config/env.js";
+import { logger } from "./utils/logger.js";
 async function bootstrap() {
-    await (0, database_1.connectDatabase)();
-    const app = (0, app_1.createApp)();
-    app.listen(env_1.env.PORT, () => {
-        logger_1.logger.info(`HireGenius API running on http://localhost:${env_1.env.PORT}`);
-        logger_1.logger.info(`Environment: ${env_1.env.NODE_ENV}`);
+    await connectDatabase();
+    const app = createApp();
+    app.listen(env.PORT, () => {
+        logger.info(`HireGenius API running on http://localhost:${env.PORT}`);
+        logger.info(`Environment: ${env.NODE_ENV}`);
     });
 }
 bootstrap().catch((error) => {
-    logger_1.logger.error("Failed to start server", error);
+    logger.error("Failed to start server", error);
     process.exit(1);
 });
 //# sourceMappingURL=server.js.map

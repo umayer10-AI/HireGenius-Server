@@ -1,21 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requireCandidate = exports.requireRecruiter = exports.requireAdmin = exports.optionalAuth = exports.requireAuth = void 0;
-exports.requireOwnershipOrAdmin = requireOwnershipOrAdmin;
-const node_1 = require("better-auth/node");
-const auth_1 = require("../lib/auth");
-const database_1 = require("../config/database");
-const constants_1 = require("../constants");
-const errors_1 = require("../utils/errors");
-const error_middleware_1 = require("./error.middleware");
-exports.requireAuth = (0, error_middleware_1.asyncHandler)(async (req, _res, next) => {
-    const session = await auth_1.auth.api.getSession({
-        headers: (0, node_1.fromNodeHeaders)(req.headers),
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../lib/auth.js";
+import { getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
+import { ForbiddenError, UnauthorizedError } from "../utils/errors.js";
+import { asyncHandler } from "./error.middleware.js";
+export const requireAuth = asyncHandler(async (req, _res, next) => {
+    const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
     });
     if (!session?.user) {
-        throw new errors_1.UnauthorizedError("Authentication required");
+        throw new UnauthorizedError("Authentication required");
     }
-    const users = (0, database_1.getCollection)(constants_1.COLLECTIONS.USERS);
+    const users = getCollection(COLLECTIONS.USERS);
     let user = await users.findOne({
         $or: [
             { betterAuthUserId: session.user.id },
@@ -58,7 +54,7 @@ exports.requireAuth = (0, error_middleware_1.asyncHandler)(async (req, _res, nex
         user = await users.findOne({ _id: insertResult.insertedId });
     }
     if (!user) {
-        throw new errors_1.UnauthorizedError("User profile not found");
+        throw new UnauthorizedError("User profile not found");
     }
     req.user = user;
     req.session = {
@@ -68,13 +64,13 @@ exports.requireAuth = (0, error_middleware_1.asyncHandler)(async (req, _res, nex
     };
     next();
 });
-exports.optionalAuth = (0, error_middleware_1.asyncHandler)(async (req, _res, next) => {
+export const optionalAuth = asyncHandler(async (req, _res, next) => {
     try {
-        const session = await auth_1.auth.api.getSession({
-            headers: (0, node_1.fromNodeHeaders)(req.headers),
+        const session = await auth.api.getSession({
+            headers: fromNodeHeaders(req.headers),
         });
         if (session?.user) {
-            const users = (0, database_1.getCollection)(constants_1.COLLECTIONS.USERS);
+            const users = getCollection(COLLECTIONS.USERS);
             const user = await users.findOne({
                 $or: [
                     { betterAuthUserId: session.user.id },
@@ -97,20 +93,20 @@ exports.optionalAuth = (0, error_middleware_1.asyncHandler)(async (req, _res, ne
     next();
 });
 function requireRole(...roles) {
-    return (0, error_middleware_1.asyncHandler)(async (req, _res, next) => {
+    return asyncHandler(async (req, _res, next) => {
         if (!req.user) {
-            throw new errors_1.UnauthorizedError("Authentication required");
+            throw new UnauthorizedError("Authentication required");
         }
         if (!roles.includes(req.user.role)) {
-            throw new errors_1.ForbiddenError("You do not have permission to perform this action");
+            throw new ForbiddenError("You do not have permission to perform this action");
         }
         next();
     });
 }
-exports.requireAdmin = requireRole("admin");
-exports.requireRecruiter = requireRole("recruiter", "admin");
-exports.requireCandidate = requireRole("candidate", "admin");
-function requireOwnershipOrAdmin(ownerId, user) {
+export const requireAdmin = requireRole("admin");
+export const requireRecruiter = requireRole("recruiter", "admin");
+export const requireCandidate = requireRole("candidate", "admin");
+export function requireOwnershipOrAdmin(ownerId, user) {
     if (user.role === "admin")
         return true;
     if (!ownerId || !user._id)

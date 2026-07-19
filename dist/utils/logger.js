@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = void 0;
 function formatMessage(level, message, meta) {
     const timestamp = new Date().toISOString();
     const metaStr = meta !== undefined ? ` ${JSON.stringify(meta)}` : "";
     return `[${timestamp}] [${level.toUpperCase()}] ${message}${metaStr}`;
 }
-exports.logger = {
+export const logger = {
     info(message, meta) {
         console.log(formatMessage("info", message, meta));
     },

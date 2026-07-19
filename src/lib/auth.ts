@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { getClient, getDb } from "../config/database";
-import { env } from "../config/env";
+import { getClient, getDb } from "../config/database.js";
+import { env } from "../config/env.js";
 
 // Better Auth options typing is intentionally loose here due to adapter generics
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

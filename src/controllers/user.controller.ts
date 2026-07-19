@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../middlewares/error.middleware";
-import { userService } from "../services/user.service";
-import { sendSuccess } from "../utils/response";
-import { calculateProfileCompletion } from "../utils/helpers";
+import { asyncHandler } from "../middlewares/error.middleware.js";
+import { userService } from "../services/user.service.js";
+import { sendSuccess } from "../utils/response.js";
+import { calculateProfileCompletion } from "../utils/helpers.js";
 
 export const getMe = asyncHandler(async (req: Request, res: Response) => {
   const data = await userService.getMe(req.user!);

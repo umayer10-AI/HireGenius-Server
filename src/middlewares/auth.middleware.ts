@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { fromNodeHeaders } from "better-auth/node";
 import { ObjectId } from "mongodb";
-import { auth } from "../lib/auth";
-import { getCollection } from "../config/database";
-import { COLLECTIONS } from "../constants";
-import type { UserDocument } from "../interfaces/models";
-import type { UserRole } from "../types";
-import { ForbiddenError, UnauthorizedError } from "../utils/errors";
-import { asyncHandler } from "./error.middleware";
+import { auth } from "../lib/auth.js";
+import { getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
+import type { UserDocument } from "../interfaces/models.js";
+import type { UserRole } from "../types/index.js";
+import { ForbiddenError, UnauthorizedError } from "../utils/errors.js";
+import { asyncHandler } from "./error.middleware.js";
 
 declare global {
   namespace Express {

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.candidateMatchPrompt = exports.jobDescriptionPrompt = exports.interviewPrepPrompt = exports.skillGapPrompt = exports.recommendationPrompt = exports.careerChatPrompt = exports.coverLetterPrompt = exports.resumePrompt = void 0;
-const resumePrompt = (input) => `You are an expert resume writer and ATS optimization specialist for HireGenius AI.
+export const resumePrompt = (input) => `You are an expert resume writer and ATS optimization specialist for HireGenius AI.
 
 Create a ${input.version} professional ATS-friendly resume for:
 - Name: ${input.name}
@@ -23,8 +20,7 @@ Return markdown with sections:
 6. Achievements
 
 Use action verbs, quantify impact where possible, and keep language professional.`;
-exports.resumePrompt = resumePrompt;
-const coverLetterPrompt = (input) => `You are HireGenius AI Cover Letter Writer.
+export const coverLetterPrompt = (input) => `You are HireGenius AI Cover Letter Writer.
 
 Write a ${input.tone} cover letter for:
 - Job title: ${input.jobTitle}
@@ -39,8 +35,7 @@ Requirements:
 - Clear value proposition
 - Professional closing
 Return plain text only.`;
-exports.coverLetterPrompt = coverLetterPrompt;
-const careerChatPrompt = (context) => `You are HireGenius AI Career Coach — a professional, warm, practical career assistant.
+export const careerChatPrompt = (context) => `You are HireGenius AI Career Coach — a professional, warm, practical career assistant.
 
 User context:
 - Name: ${context.userName}
@@ -57,8 +52,7 @@ Guidelines:
 - Do not invent credentials the user never provided
 - After answering, suggest 2-3 short follow-up actions
 - Keep responses clear and structured`;
-exports.careerChatPrompt = careerChatPrompt;
-const recommendationPrompt = (input) => `You are HireGenius AI Job Matching Engine.
+export const recommendationPrompt = (input) => `You are HireGenius AI Job Matching Engine.
 
 Candidate profile:
 - Skills: ${input.skills.join(", ")}
@@ -72,8 +66,7 @@ ${JSON.stringify(input.jobs)}
 Return a JSON array only (no markdown) of objects:
 [{ "jobId": "...", "score": 0-100, "reasons": ["..."] }]
 Rank by relevance. Explain concrete skill/location/salary matches.`;
-exports.recommendationPrompt = recommendationPrompt;
-const skillGapPrompt = (input) => `You are HireGenius AI Skill Gap Analyst.
+export const skillGapPrompt = (input) => `You are HireGenius AI Skill Gap Analyst.
 
 Current skills: ${input.currentSkills.join(", ")}
 Target role: ${input.targetRole}
@@ -86,8 +79,7 @@ Return JSON only:
   "recommendedTechnologies": string[],
   "estimatedLearningTime": string
 }`;
-exports.skillGapPrompt = skillGapPrompt;
-const interviewPrepPrompt = (input) => `You are HireGenius AI Interview Coach.
+export const interviewPrepPrompt = (input) => `You are HireGenius AI Interview Coach.
 
 Generate interview preparation for:
 - Role: ${input.jobTitle}
@@ -102,8 +94,7 @@ Return JSON only:
   "followUps": string[]
 }
 Provide 5 questions per relevant category.`;
-exports.interviewPrepPrompt = interviewPrepPrompt;
-const jobDescriptionPrompt = (input) => `You are HireGenius AI Job Description Writer for recruiters.
+export const jobDescriptionPrompt = (input) => `You are HireGenius AI Job Description Writer for recruiters.
 
 Create a professional SEO-friendly job description for:
 - Title: ${input.jobTitle}
@@ -122,8 +113,7 @@ Return JSON only:
   "benefits": string[],
   "seoSummary": string
 }`;
-exports.jobDescriptionPrompt = jobDescriptionPrompt;
-const candidateMatchPrompt = (input) => `You are HireGenius AI Candidate Match Analyzer.
+export const candidateMatchPrompt = (input) => `You are HireGenius AI Candidate Match Analyzer.
 
 Job: ${input.jobTitle}
 Required skills: ${input.jobSkills.join(", ")}
@@ -143,5 +133,4 @@ Return JSON only:
   "weaknesses": string[],
   "hiringRecommendation": string
 }`;
-exports.candidateMatchPrompt = candidateMatchPrompt;
 //# sourceMappingURL=index.js.map

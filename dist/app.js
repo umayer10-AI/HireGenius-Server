@@ -1,36 +1,30 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createApp = createApp;
-const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
-const helmet_1 = __importDefault(require("helmet"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-const node_1 = require("better-auth/node");
-const env_1 = require("./config/env");
-const auth_1 = require("./lib/auth");
-const routes_1 = __importDefault(require("./routes"));
-const error_middleware_1 = require("./middlewares/error.middleware");
-const logger_1 = require("./utils/logger");
-function createApp() {
-    const app = (0, express_1.default)();
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
+import { toNodeHandler } from "better-auth/node";
+import { env } from "./config/env.js";
+import { createAuth } from "./lib/auth.js";
+import apiRoutes from "./routes/index.js";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware.js";
+import { logger } from "./utils/logger.js";
+export function createApp() {
+    const app = express();
     app.set("trust proxy", 1);
-    app.use((0, helmet_1.default)({
+    app.use(helmet({
         crossOriginResourcePolicy: { policy: "cross-origin" },
     }));
-    app.use((0, cors_1.default)({
-        origin: [env_1.env.FRONTEND_URL, "http://localhost:3000"],
+    app.use(cors({
+        origin: [env.FRONTEND_URL, "http://localhost:3000"],
         credentials: true,
-        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
-        exposedHeaders: ["Set-Cookie"],
+        // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        // allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
+        // exposedHeaders: ["Set-Cookie"],
     }));
-    app.use((0, express_rate_limit_1.default)({
-        windowMs: env_1.env.RATE_LIMIT_WINDOW_MS,
-        max: env_1.env.RATE_LIMIT_MAX,
+    app.use(rateLimit({
+        windowMs: env.RATE_LIMIT_WINDOW_MS,
+        max: env.RATE_LIMIT_MAX,
         standardHeaders: true,
         legacyHeaders: false,
         message: {
@@ -39,19 +33,19 @@ function createApp() {
         },
     }));
     // Better Auth must be mounted before express.json / cookie-parser body interference
-    const authHandler = (0, node_1.toNodeHandler)((0, auth_1.createAuth)());
+    const authHandler = toNodeHandler(createAuth());
     app.all("/api/auth/*", authHandler);
     app.all("/api/auth/*splat", authHandler);
-    app.use((0, cookie_parser_1.default)());
-    app.use(express_1.default.json({ limit: "2mb" }));
-    app.use(express_1.default.urlencoded({ extended: true }));
+    app.use(cookieParser());
+    app.use(express.json({ limit: "2mb" }));
+    app.use(express.urlencoded({ extended: true }));
     app.use((req, _res, next) => {
-        logger_1.logger.info(`${req.method} ${req.originalUrl}`);
+        logger.info(`${req.method} ${req.originalUrl}`);
         next();
     });
-    app.use("/api", routes_1.default);
-    app.use(error_middleware_1.notFoundHandler);
-    app.use(error_middleware_1.errorHandler);
+    app.use("/api", apiRoutes);
+    app.use(notFoundHandler);
+    app.use(errorHandler);
     return app;
 }
 //# sourceMappingURL=app.js.map

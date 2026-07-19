@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { BaseRepository } from "./base.repository";
-import type { AIChatDocument, BlogDocument, NotificationDocument, ResumeGenerationDocument, ReviewDocument, SavedJobDocument } from "../interfaces/models";
+import { BaseRepository } from "./base.repository.js";
+import type { AIChatDocument, BlogDocument, NotificationDocument, ResumeGenerationDocument, ReviewDocument, SavedJobDocument } from "../interfaces/models.js";
 export declare class SavedJobRepository extends BaseRepository<SavedJobDocument> {
     constructor();
     listByUser(userId: ObjectId, page: number, limit: number): Promise<{

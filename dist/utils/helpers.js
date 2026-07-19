@@ -1,41 +1,29 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.slugify = slugify;
-exports.uniqueSlug = uniqueSlug;
-exports.sanitizeString = sanitizeString;
-exports.parsePositiveInt = parsePositiveInt;
-exports.clamp = clamp;
-exports.omitPassword = omitPassword;
-exports.calculateProfileCompletion = calculateProfileCompletion;
-const slugify_1 = __importDefault(require("slugify"));
-function slugify(text) {
-    return (0, slugify_1.default)(text, { lower: true, strict: true, trim: true });
+import slugifyLib from "slugify";
+export function slugify(text) {
+    return slugifyLib(text, { lower: true, strict: true, trim: true });
 }
-function uniqueSlug(text) {
+export function uniqueSlug(text) {
     const base = slugify(text);
     const suffix = Date.now().toString(36);
     return `${base}-${suffix}`;
 }
-function sanitizeString(value) {
+export function sanitizeString(value) {
     return value.replace(/[<>]/g, "").trim();
 }
-function parsePositiveInt(value, fallback) {
+export function parsePositiveInt(value, fallback) {
     const n = Number(value);
     if (!Number.isFinite(n) || n < 1)
         return fallback;
     return Math.floor(n);
 }
-function clamp(value, min, max) {
+export function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
 }
-function omitPassword(user) {
+export function omitPassword(user) {
     const { password: _password, ...rest } = user;
     return rest;
 }
-function calculateProfileCompletion(user) {
+export function calculateProfileCompletion(user) {
     const checks = [
         { key: "name", label: "Name", ok: Boolean(user.name) },
         { key: "email", label: "Email", ok: Boolean(user.email) },

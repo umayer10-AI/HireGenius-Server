@@ -1,10 +1,10 @@
-import { getCollection } from "../config/database";
-import { COLLECTIONS } from "../constants";
+import { getCollection } from "../config/database.js";
+import { COLLECTIONS } from "../constants/index.js";
 import type {
   ContactMessageDocument,
   NewsletterSubscriberDocument,
-} from "../interfaces/models";
-import { ConflictError } from "../utils/errors";
+} from "../interfaces/models.js";
+import { ConflictError } from "../utils/errors.js";
 
 export class ContactService {
   async submitContact(input: {

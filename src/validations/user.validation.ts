@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema, paginationSchema } from "./common.validation";
+import { objectIdSchema, paginationSchema } from "./common.validation.js";
 
 const educationSchema = z.object({
   institution: z.string().min(1),

@@ -11,7 +11,7 @@ import {
   updateUser,
   uploadAvatar,
   uploadResume,
-} from "../controllers/user.controller";
+} from "../controllers/user.controller.js";
 import {
   createCompany,
   deleteCompany,
@@ -21,7 +21,7 @@ import {
   updateCompany,
   uploadCompanyBanner,
   uploadCompanyLogo,
-} from "../controllers/company.controller";
+} from "../controllers/company.controller.js";
 import {
   createJob,
   deleteJob,
@@ -32,7 +32,7 @@ import {
   listJobs,
   updateJob,
   uploadJobBanner,
-} from "../controllers/job.controller";
+} from "../controllers/job.controller.js";
 import {
   aiChat,
   candidateMatch,
@@ -70,49 +70,49 @@ import {
   updateApplication,
   updateBlog,
   updateReview,
-} from "../controllers/misc.controller";
+} from "../controllers/misc.controller.js";
 import {
   optionalAuth,
   requireAdmin,
   requireAuth,
   requireCandidate,
   requireRecruiter,
-} from "../middlewares/auth.middleware";
-import { validate } from "../middlewares/error.middleware";
-import { uploadDocument, uploadImage } from "../middlewares/upload.middleware";
-import { paginationSchema } from "../validations/common.validation";
-import { updateUserSchema, userIdParamSchema, userQuerySchema } from "../validations/user.validation";
+} from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/error.middleware.js";
+import { uploadDocument, uploadImage } from "../middlewares/upload.middleware.js";
+import { paginationSchema } from "../validations/common.validation.js";
+import { updateUserSchema, userIdParamSchema, userQuerySchema } from "../validations/user.validation.js";
 import {
   companyIdParamSchema,
   companyQuerySchema,
   createCompanySchema,
   updateCompanySchema,
-} from "../validations/company.validation";
+} from "../validations/company.validation.js";
 import {
   createJobSchema,
   jobIdParamSchema,
   jobQuerySchema,
   updateJobSchema,
-} from "../validations/job.validation";
+} from "../validations/job.validation.js";
 import {
   applicationIdParamSchema,
   applicationQuerySchema,
   createApplicationSchema,
   updateApplicationSchema,
-} from "../validations/application.validation";
+} from "../validations/application.validation.js";
 import {
   createReviewSchema,
   reviewIdParamSchema,
   reviewQuerySchema,
   updateReviewSchema,
-} from "../validations/review.validation";
+} from "../validations/review.validation.js";
 import {
   blogIdParamSchema,
   blogQuerySchema,
   blogSlugParamSchema,
   createBlogSchema,
   updateBlogSchema,
-} from "../validations/blog.validation";
+} from "../validations/blog.validation.js";
 import {
   candidateMatchSchema,
   chatSchema,
@@ -123,9 +123,9 @@ import {
   renameChatSchema,
   resumeGenerateSchema,
   skillGapSchema,
-} from "../validations/ai.validation";
+} from "../validations/ai.validation.js";
 import { z } from "zod";
-import { objectIdSchema } from "../validations/common.validation";
+import { objectIdSchema } from "../validations/common.validation.js";
 
 const router = Router();
 

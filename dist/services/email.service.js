@@ -1,30 +1,21 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendEmail = sendEmail;
-exports.sendWelcomeEmail = sendWelcomeEmail;
-exports.sendApplicationSubmittedEmail = sendApplicationSubmittedEmail;
-exports.sendApplicationStatusEmail = sendApplicationStatusEmail;
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const env_1 = require("../config/env");
-const logger_1 = require("../utils/logger");
-const hasSmtp = Boolean(env_1.env.SMTP_HOST && env_1.env.SMTP_USER && env_1.env.SMTP_PASS);
+import nodemailer from "nodemailer";
+import { env } from "../config/env.js";
+import { logger } from "../utils/logger.js";
+const hasSmtp = Boolean(env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS);
 const transporter = hasSmtp
-    ? nodemailer_1.default.createTransport({
-        host: env_1.env.SMTP_HOST,
-        port: env_1.env.SMTP_PORT,
-        secure: env_1.env.SMTP_PORT === 465,
+    ? nodemailer.createTransport({
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT,
+        secure: env.SMTP_PORT === 465,
         auth: {
-            user: env_1.env.SMTP_USER,
-            pass: env_1.env.SMTP_PASS,
+            user: env.SMTP_USER,
+            pass: env.SMTP_PASS,
         },
     })
     : null;
-async function sendEmail(options) {
+export async function sendEmail(options) {
     if (!transporter) {
-        logger_1.logger.warn("SMTP not configured — email skipped", {
+        logger.warn("SMTP not configured — email skipped", {
             to: options.to,
             subject: options.subject,
         });
@@ -32,7 +23,7 @@ async function sendEmail(options) {
     }
     try {
         await transporter.sendMail({
-            from: env_1.env.EMAIL_FROM,
+            from: env.EMAIL_FROM,
             to: options.to,
             subject: options.subject,
             html: options.html,
@@ -41,7 +32,7 @@ async function sendEmail(options) {
         return true;
     }
     catch (error) {
-        logger_1.logger.error("Failed to send email", error);
+        logger.error("Failed to send email", error);
         return false;
     }
 }
@@ -65,21 +56,21 @@ function wrapTemplate(title, body) {
 </body>
 </html>`;
 }
-async function sendWelcomeEmail(name, email) {
+export async function sendWelcomeEmail(name, email) {
     await sendEmail({
         to: email,
         subject: "Welcome to HireGenius AI",
         html: wrapTemplate("Welcome aboard", `<p>Hi ${name},</p><p>Your HireGenius AI account is ready. Explore AI-powered job matching, resume tools, and career coaching.</p>`),
     });
 }
-async function sendApplicationSubmittedEmail(candidateName, email, jobTitle, companyName) {
+export async function sendApplicationSubmittedEmail(candidateName, email, jobTitle, companyName) {
     await sendEmail({
         to: email,
         subject: `Application submitted — ${jobTitle}`,
         html: wrapTemplate("Application received", `<p>Hi ${candidateName},</p><p>Your application for <strong>${jobTitle}</strong> at <strong>${companyName}</strong> was submitted successfully.</p>`),
     });
 }
-async function sendApplicationStatusEmail(candidateName, email, jobTitle, status) {
+export async function sendApplicationStatusEmail(candidateName, email, jobTitle, status) {
     await sendEmail({
         to: email,
         subject: `Application update — ${jobTitle}`,

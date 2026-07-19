@@ -1,6 +1,6 @@
 import { UploadApiResponse } from "cloudinary";
-import { cloudinary } from "../config/cloudinary";
-import { AppError } from "../utils/errors";
+import { cloudinary } from "../config/cloudinary.js";
+import { AppError } from "../utils/errors.js";
 
 export async function uploadBufferToCloudinary(
   buffer: Buffer,

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import type { CompanyDocument, UserDocument } from "../interfaces/models";
+import type { CompanyDocument, UserDocument } from "../interfaces/models.js";
 export declare class CompanyService {
     create(data: Omit<CompanyDocument, "_id" | "ownerId" | "verified" | "rating" | "reviewCount" | "createdAt" | "updatedAt">, owner: UserDocument): Promise<CompanyDocument>;
     list(params: {
@@ -24,14 +24,14 @@ export declare class CompanyService {
             location: string;
             email?: string;
             phone?: string;
-            socialLinks?: import("../types").SocialLinks;
+            socialLinks?: import("../types/index.js").SocialLinks;
             verified: boolean;
             rating: number;
             reviewCount: number;
             createdAt: Date;
             updatedAt: Date;
         }[];
-        meta: import("../types").PaginationMeta;
+        meta: import("../types/index.js").PaginationMeta;
     }>;
     getById(id: string): Promise<{
         openJobs: number;
@@ -47,7 +47,7 @@ export declare class CompanyService {
         location: string;
         email?: string;
         phone?: string;
-        socialLinks?: import("../types").SocialLinks;
+        socialLinks?: import("../types/index.js").SocialLinks;
         verified: boolean;
         rating: number;
         reviewCount: number;

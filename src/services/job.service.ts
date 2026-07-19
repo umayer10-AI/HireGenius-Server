@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
-import { companyRepository } from "../repositories/company.repository";
-import { jobRepository, type JobListParams } from "../repositories/job.repository";
-import { userRepository } from "../repositories/user.repository";
-import type { JobDocument, UserDocument } from "../interfaces/models";
-import { ForbiddenError, NotFoundError } from "../utils/errors";
-import { uniqueSlug } from "../utils/helpers";
-import { buildPaginationMeta } from "../utils/response";
-import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service";
+import { companyRepository } from "../repositories/company.repository.js";
+import { jobRepository, type JobListParams } from "../repositories/job.repository.js";
+import { userRepository } from "../repositories/user.repository.js";
+import type { JobDocument, UserDocument } from "../interfaces/models.js";
+import { ForbiddenError, NotFoundError } from "../utils/errors.js";
+import { uniqueSlug } from "../utils/helpers.js";
+import { buildPaginationMeta } from "../utils/response.js";
+import { deleteCloudinaryAsset, uploadBufferToCloudinary } from "./upload.service.js";
 
 export class JobService {
   async create(

@@ -10,7 +10,7 @@ import type {
   SocialLinks,
   UserRole,
   WorkMode,
-} from "../types";
+} from "../types/index.js";
 
 export interface UserDocument {
   _id?: ObjectId;
