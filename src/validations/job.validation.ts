@@ -4,8 +4,8 @@ import { objectIdSchema, paginationSchema, salarySchema } from "./common.validat
 export const createJobSchema = z.object({
   companyId: objectIdSchema,
   title: z.string().min(1).max(150),
-  shortDescription: z.string().min(1).max(300),
-  description: z.string().min(1).max(20000),
+  shortDescription: z.string().min(5).max(300),
+  description: z.string().min(5).max(20000),
   requirements: z.array(z.string()).min(1),
   responsibilities: z.array(z.string()).min(1),
   benefits: z.array(z.string()).default([]),
