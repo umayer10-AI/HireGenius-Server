@@ -17,13 +17,7 @@ export class JobService {
     user: UserDocument
   ) {
     if (!user._id) throw new ForbiddenError("Invalid user");
-    const company = await companyRepository.findByIdOrThrow(data.companyId, "Company not found");
-    if (
-      user.role !== "admin" &&
-      company.ownerId.toString() !== user._id.toString()
-    ) {
-      throw new ForbiddenError("You can only post jobs for your company");
-    }
+    await companyRepository.findByIdOrThrow(data.companyId, "Company not found");
 
     const now = new Date();
     return jobRepository.insertOne({
@@ -128,8 +122,8 @@ export class JobService {
     });
   }
 
-  async getFeatured(limit = 8) {
-    return this.list({ page: 1, limit, featured: true, status: "active", sort: "newest" });
+  async getFeatured(limit = 50) {
+    return this.list({ page: 1, limit, status: "active", sort: "newest" });
   }
 
   async getMine(

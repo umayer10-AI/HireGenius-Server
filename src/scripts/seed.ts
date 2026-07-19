@@ -155,6 +155,51 @@ async function seed() {
       createdAt: now,
       updatedAt: now,
     },
+    {
+      ownerId: recruiterResult.insertedId,
+      companyName: "Bjit",
+      industry: "Software Development",
+      companySize: "501-1000",
+      description:
+        "Bjit is a leading software development company specializing in enterprise solutions and digital transformation services.",
+      location: "Dhaka, Bangladesh",
+      website: "https://bjit.com",
+      verified: true,
+      rating: 4.6,
+      reviewCount: 25,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      ownerId: recruiterResult.insertedId,
+      companyName: "TigerBD",
+      industry: "IT Services",
+      companySize: "201-500",
+      description:
+        "TigerBD provides innovative IT solutions including web development, mobile apps, and cloud services.",
+      location: "Dhaka, Bangladesh",
+      website: "https://tigerbd.com",
+      verified: true,
+      rating: 4.4,
+      reviewCount: 15,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      ownerId: recruiterResult.insertedId,
+      companyName: "Brain Station 23",
+      industry: "Software Development",
+      companySize: "201-500",
+      description:
+        "Brain Station 23 is a software development company that builds world-class digital products for global clients.",
+      location: "Dhaka, Bangladesh",
+      website: "https://brainstation-23.com",
+      verified: true,
+      rating: 4.5,
+      reviewCount: 20,
+      createdAt: now,
+      updatedAt: now,
+    },
   ];
 
   const companyIds = [];
